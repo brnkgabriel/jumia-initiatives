@@ -1,0 +1,5 @@
+todo: fix scroll to the top when at the bottom of page
+
+todo: remove deleted entries from firestore database. perhaps remove timestamp
+
+todo: rework the vote mechanism such that what's on local storage mirrors what's on firestore. From firestore to localstorage, then from localstorage to screen
