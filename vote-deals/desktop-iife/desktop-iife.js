@@ -9,6 +9,7 @@ var Begin = function (data) {
       this.FROM_INTERVAL = "interval"
       this.FROM_INITIALIZE = "initialize"
       this.VOTED_LIST = "voted-list"
+      this.VOTED_DEALS = "voted-deals"
       this.SUBMIT = "submit"
       this.VOTE_CLASS = "-vote-btn"
       this.UNVOTED = "unvoted"
@@ -404,7 +405,7 @@ var Begin = function (data) {
       this.row_bounds = {};
       this.user = {}
       this.loggedIn = false
-      this.votedDeals = {}
+      this.votedDeals = this.jsonFrLStorage(this.VOTED_DEALS, {})
       this.mounted = false
       this.votedList = this.jsonFrLStorage(this.VOTED_LIST, [])
 
@@ -419,7 +420,7 @@ var Begin = function (data) {
       this.skus_el.addEventListener("click", this.vote.bind(this))
     }
 
-    removeFromList(sku) {
+    removeFromDealsAndList(sku) {
       var skuId = sku.getAttribute("id")
       this.updateImageAndCTA({ skuId, action: "remove", text: "vote" })
       var idxOfEmailInVotedDeals = this.votedDeals[skuId] ? this.votedDeals[skuId].indexOf(this.user.email) : -1
@@ -438,7 +439,7 @@ var Begin = function (data) {
       }
     }
 
-    addToList(sku) {
+    addToDealsAndList(sku) {
       var skuId = sku.getAttribute("id")
       var idxOfEmailInVotedDeals = this.votedDeals[skuId] ? this.votedDeals[skuId].indexOf(this.user.email) : -1
       var idxOfEmailInVotedList = this.votedList.indexOf(skuId)
@@ -478,29 +479,78 @@ var Begin = function (data) {
 
 
         // if has voted others in row, remove the vote
-        otherSkusInSection.forEach(this.removeFromList.bind(this))
+        otherSkusInSection.forEach(this.removeFromDealsAndList.bind(this))
         // add the new vote
-        this.addToList(sku)
+        this.addToDealsAndList(sku)
         
         console.log("this.votedDeals", this.votedDeals, "this.votedList", this.votedList)
 
 
-        // var idxInVotedList = this.votedList.indexOf(skuId)
 
+        this.updateVotes()
+        feature_box.emit(this.SUBMIT, this.votedDeals)
 
-        // if (idxInVotedList !== -1) {
-        //   this.votedList.splice(idxInVotedList, 1)
-        // } else {
-        //   this.votedList.push(skuId)
-        // }
-
-        // this.jsonToLStorage(this.VOTED_LIST, this.votedList)
-
-
-        // this.updateVotes("click")
-        // feature_box.emit(this.SUBMIT, this.votedDeals)
-        // this.jsonToLStorage("voted-deals", this.votedDeals)
+        this.jsonToLStorage(this.VOTED_LIST, this.votedList)
+        this.jsonToLStorage(this.VOTED_DEALS, this.votedDeals)
       }
+    }
+
+    updateUiWithVotes(data) {
+      this.updateVotedDeals(data)
+      if (this.mounted === false) {
+        console.log("mounted")
+        this.updateVotedList(data)
+        this.mounted = true
+      }
+      this.updateVotes()
+    }
+
+    updateVotedDeals(votedDealsFromDatabase) {
+      this.votedDeals = {...this.votedDeals, ...votedDealsFromDatabase}
+      this.jsonToLStorage(this.VOTED_DEALS, this.votedDeals)
+    }
+
+    updateVotedList(votedDeals) {
+      var fsVotedList = []
+      // update localstorage with vote list
+      Object.keys(votedDeals).map(skuId => {
+        var skuVotes = votedDeals[skuId]
+        var exist = skuVotes.indexOf(this.user.email) !== -1;
+        exist && fsVotedList.push(skuId)
+      })
+      var temp = [...this.votedList, ...fsVotedList]
+      this.votedList = [...new Set(temp)]
+      this.jsonToLStorage(this.VOTED_LIST, this.votedList)
+
+      // fetch vote list from localstorage
+      // use the fetched vote list from localstorage to update ui
+      this.votedList.map(skuId => this.updateImageAndCTA({ skuId, action: "add", text: "unvote" }))
+        
+      return this
+    }
+
+    updateVotes() {
+      Object.keys(this.votedDeals).map(skuId => {
+        var mapOfEmails = this.votedDeals[skuId]
+        var pieces = this.decoupledSKUID(skuId)
+        var skuEl = this.el(`.-sku[data-time="${pieces.time}"][data-sku="${pieces.sku}"]`)
+        var section = skuEl.parentElement
+        var skuCTA = this.el(".-cta", skuEl)
+        
+        this.updateVoteCount({ section, skuEl, mapOfEmails })
+      })
+    }
+
+    updateVoteCount({ section, skuEl, mapOfEmails }) {
+      var voteCount = Object.keys(mapOfEmails)
+      .filter(email => mapOfEmails[email] !== this.UNVOTED).length
+
+      var skusInSection = this.all(".-sku", section)
+      var voteCountEl = this.el(".-count", skuEl)
+      
+      voteCountEl.textContent = this.voteTxt(voteCount)
+      skuEl.setAttribute("data-votes", voteCount)
+      this.assignBgColor(section)
     }
 
     updateImageAndCTA({ skuId, action, text }) {
@@ -531,53 +581,6 @@ var Begin = function (data) {
       var time = pieces[2]
       return { category, sku, time }
     }
-
-    updateUiWithVotes(data) {
-      this.votedDeals = data
-      this.updateVotes()
-    }
-
-    updateVotes(from) {
-      Object.keys(this.votedDeals).map(skuId => {
-        var mapOfEmails = this.votedDeals[skuId]
-        var pieces = this.decoupledSKUID(skuId)
-        var skuEl = this.el(`.-sku[data-time="${pieces.time}"][data-sku="${pieces.sku}"]`)
-        var section = skuEl.parentElement
-        var skuCTA = this.el(".-cta", skuEl)
-        
-        this.updateVoteCount({ section, skuEl, mapOfEmails })
-        // this.updateImageAndCTA({ section, skuEl, skuCTA, mapOfEmails, from })
-      })
-    }
-
-    updateVoteCount({ section, skuEl, mapOfEmails }) {
-      var voteCount = Object.keys(mapOfEmails)
-      .filter(email => mapOfEmails[email] !== this.UNVOTED).length
-
-      var skusInSection = this.all(".-sku", section)
-      var voteCountEl = this.el(".-count", skuEl)
-      
-      voteCountEl.textContent = this.voteTxt(voteCount)
-      skuEl.setAttribute("data-votes", voteCount)
-      // skusInSection.forEach(this.assignColor.bind(this))
-      this.assignBgColor(section)
-    }
-
-    // updateImageAndCTA({ section, skuEl, skuCTA, mapOfEmails, from }) {
-    //   var mapOfEmail = mapOfEmails[this.user.email]
-    //   if (mapOfEmail) {
-    //     console.log("updates when updatestate is", this.updateState)
-    //     if (mapOfEmail === this.UNVOTED) {
-    //       section.classList.remove("-voted")
-    //       skuEl.classList.remove("-sku-voted")
-    //       skuCTA.textContent = "vote"
-    //     } else {
-    //       section.classList.add("-voted")
-    //       skuEl.classList.add("-sku-voted")
-    //       skuCTA.textContent = "unvote"
-    //     }
-    //   }
-    // }
 
     display(json) {
       this.reset();
@@ -678,7 +681,6 @@ var Begin = function (data) {
       var sections = document.querySelectorAll(".-section")
       sections.forEach(section => {
         var skus = section.querySelectorAll(".-sku")
-        // skus.forEach(this.assignColor.bind(this))
         this.assignBgColor(section)
       })
     
@@ -761,71 +763,6 @@ var Begin = function (data) {
       var live_tab = this.tab(start_time);
       this.live([live_row, live_tab], "add");
     }
-
-    // initializeClock(json) {
-    //   clearInterval(this.time_interval);
-    //   this.time_interval = setInterval(() => this.tick(json), 1000);
-    // }
-
-    // tick(json) {
-    //   var rtime = this.remainingTime(json);
-    //   rtime.session_state = json.session_state;
-
-    //   this.sessionEnded(rtime) && clearInterval(this.time_interval);
-    //   this.updateClockUi(rtime);
-    // }
-
-    // updateClockUi(rtime) {
-    //   var text = "";
-    //   text = rtime.session_state === this.IN_SESSION ? "Ends in " : "";
-    //   text = rtime.session_state === this.AFTER_SESSION ? "Ended last " : text;
-    //   text =
-    //     rtime.session_state === this.BTW_OR_B4_SESSION ? "Starts in " : text;
-
-    //   var clock_digits = this.digits(rtime);
-    //   var clock_text = clock_digits.filter((digit) => digit !== "").join(" : ");
-    //   this.time_el.innerHTML = text + clock_text;
-    // }
-
-    // remainingTime(json) {
-    //   var end_time = json.time;
-    //   var t = +new Date(end_time) - Date.now();
-    //   t = this.sessionEnded(json) ? Date.now() - +new Date(end_time) : t;
-
-    //   var seconds = Math.floor((t / 1000) % 60);
-    //   var minutes = Math.floor((t / 1000 / 60) % 60);
-    //   var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-    //   var days = Math.floor(t / (1000 * 60 * 60 * 24));
-    //   var json = { t, days, hours, minutes, seconds };
-
-    //   if (this.itIsEndTime(json))
-    //     setTimeout(() => feature_box.emit(this.RESET, "from reset"), 3000);
-
-    //   return { t, days, hours, minutes, seconds };
-    // }
-
-    // itIsEndTime(json) {
-    //   return (
-    //     json.days === 0 &&
-    //     json.hours === 0 &&
-    //     json.minutes === 0 &&
-    //     json.seconds === 0
-    //   );
-    // }
-
-    // digits(t) {
-    //   return t.days >= 1
-    //     ? [
-    //         this.digit(t.days, "d"),
-    //         this.digit(t.hours, "h"),
-    //         this.digit(t.minutes, "m"),
-    //       ]
-    //     : [
-    //         this.digit(t.hours, "h"),
-    //         this.digit(t.minutes, "m"),
-    //         this.digit(t.seconds, "s"),
-    //       ];
-    // }
   }
 
   class Time extends Util {
