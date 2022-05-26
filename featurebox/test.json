@@ -1,0 +1,411 @@
+{
+  "csrfToken": "60dd73c7b9aa890eee0c00df55b9a81e",
+  "messages": [],
+  "viewData": {
+    "returnParam": "/all-products/?tag=CP_MT30",
+    "showUrl": "/all-products/?tag=CP_MT30",
+    "activeFilters": [],
+    "filterIds": "category,brand,price,price_discount,shipped_from,shop_premium_services",
+    "filters": [
+      {
+        "id": "category",
+        "type": "category",
+        "name": "Category",
+        "options": [
+          { "value": "1000-computing", "text": "Computing" },
+          { "value": "1492-electronics", "text": "Electronics" },
+          { "value": "3157-sporting-goods", "text": "Sporting Goods" },
+          {
+            "value": "7221-musical-instruments",
+            "text": "Musical Instruments"
+          },
+          { "value": "8070-phones-tablets", "text": "Phones & Tablets" },
+          { "value": "11894-video-games", "text": "Gaming" },
+          { "value": "12576-home-office", "text": "Home & Office" },
+          { "value": "20696-automobile", "text": "Automobile" }
+        ]
+      },
+      {
+        "id": "brand",
+        "type": "multi",
+        "name": "Brand",
+        "options": [
+          { "value": "168431-ace-elec", "text": "Ace Elec" },
+          { "value": "17144-akai", "text": "AKAI" },
+          { "value": "30626-altec-lansing", "text": "Altec Lansing" },
+          { "value": "79602-amstrong", "text": "Amstrong" },
+          { "value": "21839-anker", "text": "Anker" },
+          { "value": "44-apple", "text": "Apple" },
+          { "value": "71712-arctic-hunter", "text": "Arctic Hunter" },
+          { "value": "68425-arzopa", "text": "Arzopa" },
+          { "value": "163058-beats-by-dre", "text": "Beats By Dre" },
+          { "value": "16653-behringer", "text": "Behringer" },
+          { "value": "45410-blackweb", "text": "Blackweb" },
+          { "value": "67314-bolead", "text": "Bolead" },
+          { "value": "16438-bose", "text": "Bose" },
+          { "value": "24618-braven", "text": "Braven" },
+          { "value": "16727-crown-star", "text": "Crown Star" },
+          { "value": "31615-d-marc-electronics", "text": "D-Marc" },
+          { "value": "16661-dbx", "text": "Dbx" },
+          { "value": "17602-dj", "text": "Dj" },
+          { "value": "26709-djack", "text": "Djack" },
+          { "value": "18287-d-marc", "text": "D Marc" },
+          { "value": "41321-dobe", "text": "Dobe" },
+          { "value": "24001-echo", "text": "Echo" },
+          { "value": "17473-edifier", "text": "Edifier" },
+          { "value": "71726-elik", "text": "Elik" },
+          { "value": "162803-emgold", "text": "EMGOLD" },
+          { "value": "75037-emoji", "text": "Emoji" },
+          { "value": "101798-enkor", "text": "Enkor" },
+          { "value": "67816-equantu", "text": "Equantu" },
+          { "value": "17207-f-d", "text": "F&D" },
+          { "value": "28205-fexda", "text": "Fexda" },
+          { "value": "779-generic", "text": "Generic" },
+          { "value": "786-google", "text": "Google" },
+          { "value": "167933-brand-gstar", "text": "Gstar" },
+          { "value": "796-harmankardon", "text": "Harman Kardon" },
+          { "value": "17208-havit", "text": "Havit" },
+          { "value": "16368-hisense", "text": "Hisense" },
+          { "value": "38832-hisonic", "text": "Hisonic" },
+          { "value": "45627-homeflower", "text": "Homeflower" },
+          { "value": "246-hp", "text": "Hp" },
+          { "value": "40110-imax", "text": "Imax" },
+          { "value": "16717-infinix", "text": "Infinix" },
+          { "value": "16724-itel", "text": "Itel" },
+          { "value": "812-jbl", "text": "Jbl" },
+          { "value": "27679-jiepak", "text": "Jiepak" },
+          { "value": "30679-jlab", "text": "Jlab" },
+          { "value": "842-lenovo", "text": "Lenovo" },
+          { "value": "835-lg", "text": "LG" },
+          { "value": "852-logitech", "text": "Logitech" },
+          { "value": "164445-lp", "text": "LP" },
+          { "value": "28173-marcsonic", "text": "Marcsonic" },
+          { "value": "366-microsoft", "text": "Microsoft" },
+          { "value": "58140-mooer", "text": "Mooer" },
+          { "value": "21624-mpow", "text": "Mpow" },
+          { "value": "134989-music", "text": "Music" },
+          { "value": "44313-nby", "text": "Nby" },
+          { "value": "19362-newage", "text": "New Age" },
+          { "value": "68810-new-rixing", "text": "New Rixing" },
+          { "value": "23752-nia", "text": "Nia" },
+          { "value": "17502-nillkin", "text": "Nillkin" },
+          { "value": "163327-nns", "text": "NNS" },
+          { "value": "891-nokia", "text": "Nokia" },
+          { "value": "16657-numark", "text": "Numark" },
+          { "value": "138134-nunix", "text": "Nunix" },
+          { "value": "58893-oculus", "text": "Oculus" },
+          { "value": "24537-oraimo", "text": "Oraimo" },
+          { "value": "140438-p47", "text": "P47" },
+          { "value": "904-panasonic", "text": "Panasonic" },
+          { "value": "909-pioneer", "text": "Pioneer" },
+          { "value": "16439-plantronics", "text": "Plantronics" },
+          { "value": "16437-polystar", "text": "Polystar" },
+          { "value": "167292-purple-aroma", "text": "Purple Aroma" },
+          { "value": "21951-remax", "text": "Remax" },
+          { "value": "65586-rockview", "text": "Rockview" },
+          { "value": "43377-roku", "text": "Roku" },
+          { "value": "36769-sada", "text": "Sada" },
+          { "value": "948-samsung", "text": "Samsung" },
+          { "value": "18788-shure", "text": "Shure" },
+          { "value": "42403-single", "text": "Single" },
+          { "value": "964-skullcandy", "text": "Skullcandy" },
+          { "value": "70643-sodo", "text": "SODO" },
+          { "value": "521-sony", "text": "Sony" },
+          { "value": "153997-super-sound", "text": "Super Sound" },
+          { "value": "73967-t-g", "text": "T&G" },
+          { "value": "40371-taotronics", "text": "Taotronics" },
+          { "value": "16339-tecno", "text": "Tecno" },
+          { "value": "163796-tedber", "text": "Tedber" },
+          { "value": "43139-tg", "text": "TG" },
+          { "value": "74593-toproad", "text": "Toproad" },
+          { "value": "156521-ultimate-ears", "text": "Ultimate Ears" },
+          { "value": "44742-umidigi", "text": "UMIDIGI" },
+          { "value": "18203-usams", "text": "Usams" },
+          { "value": "40388-v8", "text": "V8" },
+          { "value": "156863-v9", "text": "V9" },
+          { "value": "37458-vivo", "text": "Vivo" },
+          { "value": "158348-wireless-music", "text": "Wireless Music" },
+          { "value": "23753-wster", "text": "Wster" },
+          { "value": "23363-xiaomi", "text": "XIAOMI" },
+          { "value": "1040-yamaha", "text": "Yamaha" },
+          { "value": "19941-brand-19941-yoga", "text": "Yoga" },
+          { "value": "24551-zealot", "text": "Zealot" }
+        ],
+        "searchLabel": "Search"
+      },
+      {
+        "id": "price",
+        "type": "price",
+        "name": "Price",
+        "currency": "₦",
+        "btnCTA": "Apply",
+        "minPlaceholder": "Min",
+        "maxPlaceholder": "Max",
+        "minLabel": "Min.",
+        "maxLabel": "Max.",
+        "separator": "-",
+        "range": {
+          "min": 990,
+          "minSelected": 990,
+          "max": 336999,
+          "maxSelected": 336999,
+          "interval": 10
+        }
+      },
+      {
+        "id": "price_discount",
+        "name": "Discount Percentage",
+        "type": "single",
+        "options": [
+          { "value": "50-100", "text": "50% or more" },
+          { "value": "40-100", "text": "40% or more" },
+          { "value": "30-100", "text": "30% or more" },
+          { "value": "20-100", "text": "20% or more" },
+          { "value": "10-100", "text": "10% or more" }
+        ]
+      },
+      {
+        "id": "shipped_from",
+        "name": "Shipped From",
+        "type": "multi",
+        "options": [
+          { "value": "country_local", "text": "Shipped from Nigeria" }
+        ]
+      },
+      {
+        "id": "shop_premium_services",
+        "type": "multi",
+        "name": "Express Delivery",
+        "options": [
+          {
+            "value": "shop_express",
+            "text": "catalog_filter_option_shop_express_text",
+            "image": "express",
+            "popup": {
+              "popupCTA": "Details",
+              "popupData": {
+                "title": "Jumia Express",
+                "text": "Enjoy;<br/><br/>\n- Free Shipping on all Jumia Express orders in Lagos and Ibadan<br/>\n- Free shipping on Jumia Express orders above N4,999 in Abuja.<br/>\n- next day delivery in Lagos if you order before 2pm.<br/>\n<br/>\nFree shipping offer is not valid for large sized items. Click <a href=\"https://www.jumia.com.ng/sp-jumia-express\">here</a> for more details",
+                "closeCTA": "Close Popup"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "saveCTA": "Save",
+    "resetCTA": "Reset",
+    "showCTA": "Show (1192)",
+    "htmlErrors": { "typeMismatch": "Invalid Information" }
+  },
+  "head": {
+    "dynamic": {
+      "title": "Filters page",
+      "meta": [
+        { "property": "og:type", "content": "product" },
+        { "property": "og:site_name", "content": "Jumia Nigeria" },
+        { "property": "og:title", "content": "Filters page" },
+        { "property": "og:url", "content": "/catalog/filters/" },
+        {
+          "property": "og:image",
+          "content": "https://ng.jumia.is/cms/jumia_logo_small.png"
+        },
+        { "property": "og:locale", "content": "en_NG" },
+        { "name": "title", "content": "Filters page" },
+        { "name": "robots", "content": "noindex,follow" }
+      ],
+      "link": []
+    },
+    "static": {
+      "meta": [
+        { "property": "fb:app_id", "content": "728795990650684" },
+        { "property": "fb:pages", "content": "291297097615087" },
+        {
+          "name": "google-site-verification",
+          "content": "4vr0StQ8YkyEzgDxkC_mgx0UMSH2xM3vkOaRpaMEjWM"
+        },
+        {
+          "name": "msvalidate.01",
+          "content": "66DCE7076C4C56245BAB83C687510491"
+        }
+      ]
+    }
+  },
+  "view": "Catalog/Filters",
+  "activeLanguage": "en",
+  "languages": { "en": { "text": "English", "default": true } },
+  "languagesData": null,
+  "countryCode": "NG",
+  "url": "/catalog/filters/?return=/all-products/?tag=CP_MT30",
+  "device": "mobile",
+  "header": {
+    "accountCTA": "My account",
+    "backCTA": "Go back",
+    "cartCTA": "Cart",
+    "logoCTA": "Jumia Nigeria: Online Shopping for Electronics, Phones & Fashion",
+    "menuCTA": "Menu",
+    "searchForm": {
+      "fields": {
+        "q": {
+          "label": "Search",
+          "placeholder": "Search products, brands and categories",
+          "value": ""
+        }
+      }
+    },
+    "searchCTA": "Search",
+    "resetCTA": "Reset Search",
+    "submitCTA": "Submit Search"
+  },
+  "footer": [],
+  "user": { "isGuest": true },
+  "cart": { "count": 0 },
+  "reCaptcha": null,
+  "tracking": {
+    "gtm": {
+      "key": "GTM-KS6DC65",
+      "url": "/catalog/filters/?return=/all-products/?tag=CP_MT30",
+      "pageType": "filters",
+      "pageSubtype": "main",
+      "pageKey": "filters_main"
+    }
+  },
+  "abTests": {
+    "ShippingFees": "A",
+    "SearchABTest": "popularity_rerank_size",
+    "Home": "A",
+    "MLP": "B",
+    "CLP": "A",
+    "SearchPerso": "Y",
+    "Cart": "E"
+  },
+  "banners": null,
+  "nlPopup": null,
+  "rtPopup": null,
+  "ads": null,
+  "policyBar": {
+    "rev": "v1.0",
+    "policyUrl": "/sp-privacy/",
+    "text": "This website uses cookies. For further information on how we use cookies you can read our ",
+    "policyCTA": "Privacy and Cookie notice",
+    "closeCTA": "Close"
+  },
+  "headerData": {
+    "type": "simple",
+    "title": "Filter",
+    "backUrl": "/all-products/?tag=CP_MT30"
+  },
+  "sideDrawer": {
+    "logoText": "JUMIA logo",
+    "closeCTA": "Close side drawer",
+    "accountCTA": "My Jumia account",
+    "ordersCTA": "Orders",
+    "reviewsCTA": "Pending Reviews",
+    "vouchersCTA": "Jumia Coupon",
+    "wishlistCTA": "Saved Items",
+    "categories": {
+      "title": "Our Categories",
+      "seeAllCTA": "See All",
+      "links": [
+        {
+          "url": "/groceries/",
+          "text": "Supermarket",
+          "icon": "cat-groceries"
+        },
+        {
+          "url": "/health-beauty/",
+          "text": "Health & Beauty",
+          "icon": "cat-beauty"
+        },
+        {
+          "url": "/home-office/",
+          "text": "Home & Office",
+          "icon": "cat-appliance"
+        },
+        {
+          "url": "/phones-tablets/",
+          "text": "Phone & Tablets ",
+          "icon": "cat-mobile"
+        },
+        { "url": "/computing/", "text": "Computing", "icon": "cat-computing" },
+        { "url": "/electronics/", "text": "Electronics", "icon": "cat-tv" },
+        {
+          "url": "/womens-fashion/",
+          "text": "Women's Fashion",
+          "icon": "cat-women-clothing"
+        },
+        {
+          "url": "/mens-fashion/",
+          "text": "Men's Fashion",
+          "icon": "cat-men-clothing"
+        },
+        {
+          "url": "/baby-products/",
+          "text": "Baby Products",
+          "icon": "cat-baby"
+        },
+        { "url": "/video-games/", "text": "Gaming", "icon": "cat-games" },
+        {
+          "url": "/sporting-goods/",
+          "text": "Sporting Goods",
+          "icon": "cat-fitness"
+        },
+        { "url": "/automobile/", "text": "Automobile", "icon": "cat-car" }
+      ]
+    },
+    "services": {
+      "title": "Our Services",
+      "seeAllCTA": "See All",
+      "seeAllUrl": "/our-services/",
+      "links": [
+        {
+          "url": "/mlp-jumia-prime/",
+          "text": "Jumia Prime",
+          "icon": "services"
+        },
+        {
+          "url": "https://5y2z.adj.st/services/airtime?adjust_t=3n2oeoo_3xwuv7t&adjust_deeplink=jumiaoneapp%3A%2F%2Fservices%2Fairtime",
+          "text": "Pay Airtime & Bills",
+          "icon": "services"
+        },
+        {
+          "url": "https://5y2z.adj.st/services/electricity?adjust_t=3n2oeoo_3xwuv7t&adjust_deeplink=jumiaoneapp%3A%2F%2Fservices%2Felectricity",
+          "text": "Pay Electricity Bills",
+          "icon": "services"
+        },
+        {
+          "url": "https://5y2z.adj.st/services/internet?adjust_t=3n2oeoo_3xwuv7t&adjust_deeplink=jumiaoneapp%3A%2F%2Fservices%2Finternet",
+          "text": "Pay Internet Bills",
+          "icon": "services"
+        },
+        {
+          "url": "https://5y2z.adj.st/services/mobile-data?adjust_t=3n2oeoo_3xwuv7t&adjust_deeplink=jumiaoneapp%3A%2F%2Fservices%2Fmobile-data",
+          "text": "Buy Data",
+          "icon": "services"
+        },
+        {
+          "url": "https://5ey6.adj.st/?adjust_t=8t895ve_7uo0yhw&adjust_deeplink=jumiafood%3A%2F%2F",
+          "text": "Jumia Food",
+          "icon": "food"
+        }
+      ],
+      "bottomLinks": [
+        { "url": "/marketplace-vendor/", "text": "Sell on Jumia" },
+        { "url": "/sp-contact/", "text": "Contact us" },
+        { "url": "/help/", "text": "Help Center" }
+      ]
+    },
+    "liveChat": {
+      "btnCTA": "Live Help",
+      "loadingText": "Live Chat is loading..."
+    }
+  },
+  "smartBanner": [],
+  "showFooter": false,
+  "sprites": {
+    "icons": "https://www.jumia.com.ng/assets_hy/images/i-icons.ec6b42c8.svg",
+    "global": "https://www.jumia.com.ng/assets_hy/images/i-global.0ccb65ea.svg",
+    "shop-jumia": "https://www.jumia.com.ng/assets_hy/images/i-shop-jumia.d6eeb562.svg"
+  },
+  "isMini": false
+}

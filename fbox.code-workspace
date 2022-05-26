@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "..\\OTHERS\\1-Initiatives\\new"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "initiatives"
+	}
+}

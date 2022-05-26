@@ -98,8 +98,7 @@ body {
 }
 
 .-umbrella-cat {
-  padding-left: 16px !important;
-  padding-right: 16px !important
+  padding-left: 0px !important
 }
 
 .-container a {
@@ -401,8 +400,7 @@ html.-fetch-loading {
 }
 
 .-filters .-filter .-item {
-  padding: 8px 32px;
-  padding-left: 16px;
+  padding: 8px 16px;
   cursor: pointer;
   text-transform: capitalize
 }

@@ -1,107 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <title>Document</title>
-</head>
-
-<body>
-  <!-- <div class="-container" id="feature-box-html">
-    <a href="https://www.jumia.com.ng/mlp-phone-mania/" class="-row -banner" target="_blank">
-      <div class="-row -title"></div>
-      <img src="https://ng.jumia.is/cms/0-1-weekly-cps/2021/w19/cb-phone-mania.png" alt="banner" />
-    </a>
-    <div class="-temporary-host -hide"></div>
-    <div class="-header -posrel">
-      <div class="-jumia-loader-wrap -posabs">
-        <div class="-jumia-loader -posabs">
-          <div class="-cart -posabs"></div>
-          <div class="-circle -posabs"><i class="-fl-star"></i></div>
-        </div>
-      </div>
-      <div class="-controls -posrel">
-        <div class="-left -posabs">Results</div>
-        <form class="-center -posabs"><span class="-search-icn -center-el -posabs"></span><input type="text"
-            placeholder="Search products, brands and categories" name="search" class="-search-input -center-el"
-            required /><div class="-search-btn -center-el -cta">search</div></form>
-        <div class="-pagination -posabs"><span class="-col -prev"></span>
-          <div class="-col -status">- / -</div><span class="-col -next"></span><input class="-col -num" type="number"
-            name="page" value="1" />
-          <div class="-inlineblock -vamiddle -to-page -cta -posrel"></div>
-        </div>
-        <div class="-right -posabs">
-          <label class="-dpdw" for="dpdw-sort">Sort by: Popularity</label>
-          <div class="-dropdown">
-            <div class="-option" data-query="" data-value="Sort by: Popularity">Popularity</div>
-            <div class="-option" data-query="newest" data-value="Sort by: Newest Arrivals">Newest Arrivals</div>
-            <div class="-option" data-query="lowest-price" data-value="Sort by: Price: Low to High">Price: Low to High
-            </div>
-            <div class="-option" data-query="highest-price" data-value="Sort by: Price: High to Low">Price: High to Low
-            </div>
-            <div class="-option" data-query="rating" data-value="Sort by: Product Rating">Product Rating</div>
-          </div>
-        </div>
-      </div>
+  <body>
+    <div class="-container">
+      <div id="app"></div>
     </div>
-    <div class="-row -catalog">
-      <div class="-col -w25 -inlineblock -vatop -filters">
-        <div class="-filter -category">
-          <div class="-title -posrel">
-            <div class="-text -posabs">category</div>
-            <div class="-ctac -posabs" data-url="">reset</div>
-          </div>
-          <div class="-categories"></div>
-        </div>
-        <div class="-filter -brand">
-          <div class="-title">brand</div>
-          <div class="-search -posrel"><span class="-search-icn"></span><input type="search" placeholder="Search" />
-          </div>
-          <div class="-list"></div>
-        </div>
-        <form class="-filter -product-rating">
-          <div class="-title">product rating</div>
-          <div class="-list"></div>
-        </form>
-        <fieldset class="-filter -price"></fieldset>
-        <form class="-filter -discount-percentage">
-          <div class="-title">discount percentage</div>
-          <div class="-list"></div>
-        </form>
-        <div class="-filter -express-shipping">
-          <div class="-title">express shipping</div>
-          <div class="-list"></div>
-        </div>
-        <div class="-filter -shipped-from">
-          <div class="-title">shipped from</div>
-          <div class="-list"></div>
-        </div>
-        <form class="-filter -tag">
-          <div class="-title">collections</div>
-          <div class="-list"></div>
-        </form>
-      </div><div class="-col -w75 -inlineblock -vatop -filter-list-products" id="catalog-listing">
-        <div class="-filter-list">
-          <div class="-sub-header -posrel">
-            <div class="-products-found -posabs">0 products found</div>
-          </div>
-        </div>
-        <div class="-products"></div>
-      </div>
-    </div>
-  </div> -->
-  <div id="app"></div>
-  <script src="https://unpkg.com/mustache@latest"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
-  <!-- <script src="./script.js"></script> -->
-  <!-- <script src="./script-class.js"></script> -->
-  <script src="./script.js"></script>
-  <script src="./config.js"></script>
-</body>
-
+    <script src="https://unpkg.com/mustache@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+    <!-- <script src="./script.js"></script> -->
+    <!-- <script src="./script-class.js"></script> -->
+    <script src="./listeners.js"></script>
+    <script src="./script.js"></script>
+    <script src="./config.js"></script>
+  </body>
 </html>
