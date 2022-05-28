@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./jumdle.css">
+  <title>Wordle</title>
+</head>
+<body class="-localhost">
+  <div class="-container" id="initiative">
+    <div class="-game-wrap -posrel -loggedin">
+      <div class="-login-wrap -posabs"><a href="https://www.jumia.com.ng/customer/account/login/?return=https%3A%2F%2Fwww.jumia.com.ng%2Fsp-wordle%2F" class="-posabs -login-btn -cta">login</a></div>
+      <div class="-game-tabs-parent -posrel">
+        <div class="-timer-score -posabs">
+          <div class="-remaining -st">Pts (-)</div><div class="-st">:</div><div class="-elapsed -st">Atp (-)</div><div class="-st">:</div><div class="-elapsed -st">Sco (-)</div>
+        </div>
+      </div>
+      <div class="-game -posrel" data-state="game">
+        <div class="gamegrid -posabs">
+          <div id="controls">
+            <div id="newGameButton" class="-cta">NEW GAME</div>
+          </div>
+          <div id="game">
+            <div id="game-container"></div>
+            <div id="keyboard"></div>
+          </div>
+        </div>
+        <div class="-scores -posabs">
+          <div class="-update-cycle-time -posrel">
+            <div class="-cta -update-leaderboard -posabs" style="display: none;">reload</div>
+            <div class="-update-cycle -posabs">
+              <div class="-note">Updates in</div>
+              <div class="-timer" id="clock"></div>
+            </div>
+            <div class="-update-times -posabs">
+              <div class="-note">Last Update</div>
+              <div class="-update-time">Sun Sep 05 2021 10:11:37 AM</div>
+            </div>
+          </div>
+          <input class="-search" type="text" placeholder="search..."/>
+          <div class="-table -posrel">
+            <div class="-no-entries -posabs -hide">No entries found</div>
+            <div class="-score-row -head"><div class="-score-col -color"></div><div class="-score-col -pos">Pos.</div><div class="-score-col -name">Name</div><div class="-score-col -tme">Sco.</div><div class="-score-col -date">Date</div></div>
+            <div class="-score-list"></div>
+          </div>
+          <div class="-table-status -posrel"><div class="-entries-per-page"><select><option value="10" selected="">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option></select><span class="-txt">entries per page</span></div><div class="-table-info -posabs">Showing 1 - 25 of 63</div></div>
+          <div class="-pagination -posrel"><div class="-pages -posabs"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var store = {
+      customer: {
+        email: 'damidera@gmail.com'
+      },
+      headerInfo: {
+        customer: {
+          firstName: 'Damidera'
+        }
+      }
+    }
+  </script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+  <script src="https://jumia-app-vision.web.app/featurebox/featurebox.js"></script> -->
+  <script src="./jumdle.js"></script>
+</body>
+</html>

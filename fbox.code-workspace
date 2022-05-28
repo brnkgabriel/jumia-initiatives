@@ -5,9 +5,15 @@
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "..\\TNG\\vite-homepage"
+		},
+		{
+			"path": "..\\OTHERS\\SocialMedia\\all-games-new"
 		}
 	],
 	"settings": {
-		"liveServer.settings.multiRootWorkspaceName": "initiatives"
+		"liveServer.settings.multiRootWorkspaceName": "new"
 	}
 }

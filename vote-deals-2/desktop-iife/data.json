@@ -1,0 +1,41 @@
+[
+  {
+    "id": "Phones_SA948MT23H1QHNAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "brnkgabriel@gmail.com": { "stringValue": "voted" } }
+  },
+  {
+    "id": "Phones_XI363MT2AN7O4NAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "gabibironke@gmail.com": { "stringValue": "unvoted" } }
+  },
+  {
+    "id": "Phones_SA948MT2SWZEYNAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "gabibironke@gmail.com": { "stringValue": "unvoted" } }
+  },
+  {
+    "id": "Accessories_ED473EA082SBENAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "gabibironke@gmail.com": { "stringValue": "voted" } }
+  },
+  {
+    "id": "Phones_NO891MP08ZCLWNAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "brnkgabriel@gmail.com": { "stringValue": "unvoted" } }
+  },
+  {
+    "id": "Accessories_AN839EA2PVZFCNAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": {
+      "brnkgabriel@gmail.com": { "stringValue": "unvoted" },
+      "gabibironke@gmail.com": { "stringValue": "unvoted" }
+    }
+  },
+  {
+    "id": "Phones_UM742MP1IK7IENAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "gabibironke@gmail.com": { "stringValue": "unvoted" } }
+  },
+  {
+    "id": "Fashion_GA946FC1FDY3BNAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "gabibironke@gmail.com": { "stringValue": "voted" } }
+  },
+  {
+    "id": "Phones_XI363MT2YGJV8NAFAMZ_Jun 14 2022 00:00:00 GMT+0100",
+    "votes": { "brnkgabriel@gmail.com": { "stringValue": "unvoted" } }
+  }
+]

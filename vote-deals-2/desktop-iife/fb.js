@@ -30,6 +30,7 @@ var Featurebox = (function (json) {
       this.PRODUCTS_DISPLAYED = "products displayed" 
       this.CATALOG = "catalog"
       this.FILTER = "filter"
+      this.JUMIA_LOGO = "https://ng.jumia.is/cms/0-1-homepage/jumia-new-logo.png"
       
       this.isMobile = navigator.userAgent.toLowerCase().includes("mobi")
       this.urlParams = {
@@ -265,6 +266,12 @@ var Featurebox = (function (json) {
 
     cartSectionAdjustments() {
       this.addPreloaderToMainHeader() && this.proceed()
+      util.isMobile && this.mobileLogoUpdate()
+    }
+
+    mobileLogoUpdate() {
+      let logo = util.el(".main_header--nav-left--logo.-logo_cms>img")
+      logo.setAttribute("src", util.JUMIA_LOGO)
     }
 
     proceed() {
@@ -272,6 +279,9 @@ var Featurebox = (function (json) {
       let cart = util.el("#cart")
       let account = util.el("#account")
       let help = util.el("#help")
+      let logo = util.el(".header-main>.logo>a>img")
+      
+      logo.setAttribute("src", util.JUMIA_LOGO)
 
       actions.innerHTML = ""
       actions.appendChild(account)
@@ -1583,6 +1593,7 @@ var Featurebox = (function (json) {
 
   return {
     pubsub,
+    DATA_ARRIVES: util.DATA_ARRIVES,
     FETCHED_DATA: util.DATA_ARRIVES,
     ImageObserver,
     is_mobile: util.isMobile,
