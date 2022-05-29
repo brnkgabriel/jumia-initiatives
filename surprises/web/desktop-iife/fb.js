@@ -349,6 +349,7 @@ var Featurebox = (function (json) {
       this.preloaders.forEach(this.removeLoader.bind(this))
     }
     removeLoader(el) {
+      // console.log(el)
       el.classList.remove("-loading")
       el.classList.add("-hide")
     }

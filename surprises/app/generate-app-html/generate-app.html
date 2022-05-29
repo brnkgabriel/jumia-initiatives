@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./generate-app.css">
+  <title>Spin & Win</title>
+</head>
+<body class="-localhost">
+
+  <div class="-all">
+    <header class="header-main-wrapper -hide">
+      <div class="osh-container header-main"><span class="-posabs -preloader" style="display: none;"></span> <div class="logo" style="visibility: visible;"><a href="https://www.jumia.com.ng/" title="Jumia – online shopping in Nigeria for electronics, mobiles, fashion &amp; more">  <img src="https://static.jumia.com.ng/cms/jumialogonew.png" width="170" height="40" alt="Jumia – online shopping in Nigeria for electronics, mobiles, fashion &amp; more">
+  
+      <style>
+      .osh-row.top {display: none !important;}
+      .mabaya .shop-express-logo-container {display: block !important;}
+      </style> </a></div> <div class="actions"><div id="account" class="osh-dropdown -plain -popover"><div class="toggle"><a href="https://www.jumia.com.ng/customer/account/login/" class="osh-btn -plain" data-js-event="hover" data-emit-event="account.open" data-js-element="#account">  <span class="label js-store" data-js-store="headerInfo.customer.label"><icon></icon><txt>Hi,</txt></span> <span class="sub-label js-store" data-js-store="headerInfo.customer.firstName">Olanrewaju</span>  <i class="caret osh-font-light-arrow-down"></i> </a></div><div class="toggle-content "><div class="osh-popover-arrow"></div><div class="content osh-account-overlay"> </div></div></div><div id="help" class="osh-dropdown -plain defaultCursor -popover"><div class="toggle"><button class="osh-btn -plain defaultCursor" data-js-event="hover" data-emit-event="help.open" data-js-element="#help">  <span class="label "></span> <span class="sub-label ">Help?</span>  <i class="caret osh-font-light-arrow-down"></i> </button></div><div class="toggle-content "><div class="osh-popover-arrow"></div><div class="content osh-help-overlay">  </div></div></div><div id="cart" class="osh-dropdown -plain -cart -jewel -default"><div class="toggle"><a href="https://www.jumia.com.ng/cart/" class="osh-btn -plain -cart -jewel" data-js-event="non" data-js-element="#cart"> <i class=" osh-font-cart"></i> <span class="label js-store" data-js-store="fullPageCache.pageData.common.cartOverlay.itemsCount">1</span> <span class="sub-label ">Cart</span>   </a></div><div class="toggle-content -opposite"><div class="content osh-cart-overlay"></div></div></div></div> <div class="osh-search-bar"><div class="field-panel"><i class="osh-icon -icon_search"></i> <input id="header-search-input" class="field js-store" type="text" placeholder="Search for products, brands and categories" data-js-store="fullPageCache.pageData.common.search.query"><div id="header-search-results" class="results"></div></div><input id="header-search-submit" class="osh-btn -primary action" type="button" value="Search"></div></div>
+    </header>
+    <div class="-column -left"> 
+      <div class="-generate-app-html -posrel">
+        <form class="-form-controls -hide" id="urlid-form-controls">
+          <input type="text" name="googlesheet_id" required placeholder="Google Sheet id: e.g. 1D3FEbGjzzskbw0k1lKnLw_NmA-xshEDGAvdYcc0ldms" id="googlesheet-id"/>
+          <input type="text" name="jumia_url" required placeholder="https://www.jumia.com.ng/sp-data-config-skus/" id="jumia-url"/>
+          <button type="submit" id="fetch-data">fetch data</button>
+        </form>
+        <button class="-copy-btn -posabs" data-feedback=" Copied!" data-init=" Copy">
+          <img src="https://ng.jumia.is/cms/8-18/sku-finder/copy-to-clipboard-icn-white.png" alt="copy icon"/>
+        </button>
+        <textarea class="-inline_block -vamiddle -to-copy"></textarea>
+      </div>
+      <div class="-temporary -hide"></div>
+      <div class="-container -fetch-loading" id="initiative">
+        <div class="-jumia-loader-wrap -posfix">
+          <div class="-jumia-loader -posabs">
+            <div class="-cart -posabs"></div>
+            <div class="-circle -posabs"></div>
+          </div>
+        </div>
+        <div class="-row -banner -top -posrel">
+          <div class="-how-it-works -posabs">
+            <span class="-posabs -preloader -loading"></span>
+            <span class="-posabs -txt">Terms & Conditions</span>
+          </div>
+          <div class="-rules_eligibility -posabs -animate">
+            <div class="-title">Terms & Conditions</div>
+            <div class="-re -rules"></div>
+          </div>
+          <a href="/sp-mobile-apps" class="-img -posrel">
+            <span class="-posabs -preloader -loading"></span>
+            <img class="lazy-image" alt="top banner" />
+          </a>
+        </div>
+        <div class="-main-el" id="top">
+          <div class="-tabs -possti">
+            <div class="-control -prev -posabs">
+              <span class="-posabs -preloader -loading"></span>
+            </div>
+            <div class="-control -next -posabs">
+              <span class="-posabs -preloader -loading"></span>
+            </div>
+            <div class="-all-tabs -animate -posrel"></div>
+            <div class="-countdown-row -posrel">
+              <span class="-posabs -preloader -loading"></span>
+              <span class="-time">Starts in 00h : 00m : 00s</span>
+            </div>
+          </div>
+          <div class="-skus -animate">
+            <div class="-sku_row -posrel _row-1623366000000 active">
+              <a href="#" target="_blank" class="-sku -posrel -available">
+                <span class="-posabs -preloader -loading"></span>
+              </a><a href="#" target="_blank" class="-sku -posrel -available">
+                <span class="-posabs -preloader -loading"></span>
+              </a><a href="#" target="_blank" class="-sku -posrel -available">
+                <span class="-posabs -preloader -loading"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <textarea name="copy" class="-gridview-skus" cols="30" rows="10" placeholder="paste skus... CU005FC0IQMTPNAFAMZ,TS657EA0HUFVQNAFAMZ..."></textarea>
+        <div class="-get-gridview-skus-data -cta">get skus data</div>
+        <div id="app"></div>
+      </div>
+    </div><div class="-column -right">
+      <iframe id="test-bench" src="../test-bench/app.html"></iframe>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+  <script src="https://jumia-app-vision.web.app/featurebox/featurebox.js"></script>
+  <script src="./generate-app.js"></script>
+</body>
+</html>
