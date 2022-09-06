@@ -1,0 +1,9 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU",
+  authDomain: "jumia-vote-deals.firebaseapp.com",
+  projectId: "jumia-vote-deals",
+  storageBucket: "jumia-vote-deals.appspot.com",
+  messagingSenderId: "15013363201",
+  appId: "1:15013363201:web:d8ed9ec2a4f2f331d50a00",
+  measurementId: "G-GNT4HGW9Z3"
+};

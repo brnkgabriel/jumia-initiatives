@@ -58,6 +58,8 @@ const Begin = (function (data) {
       this.skuID = (sku) => sku.category + "_" + sku.sku + "_" + sku.time
       this.groupID = (category, time) => this.id(category + "-" + this.fullDate(time).toLowerCase().split(" ").join("-"), "-")
       this.voteTxt = count => `${count} vote(s)`
+      this.randomize = list => list.sort(() => Math.random() - 0.5)
+      this.reverse = list => list.reverse()
     }
 
 
@@ -326,7 +328,8 @@ const Begin = (function (data) {
     init() {
       const allTimes = this.times(this.data)
       const pastAndFutureTimes = this.pastAndFutureTimes(allTimes)
-      const reorderedTimes = pastAndFutureTimes.future.concat(pastAndFutureTimes.past)
+      let reorderedTimes = pastAndFutureTimes.future.concat(pastAndFutureTimes.past)
+      reorderedTimes = this.randomize(reorderedTimes)
       const groupedSKUs = this.group(this.data, reorderedTimes)
       feature_box.pubsub.emit(this.BUILD, { reorderedTimes, groupedSKUs })
       return this
@@ -526,7 +529,7 @@ const Begin = (function (data) {
     rowHTML(group, idx) {
       let categories = group.skus.map(sku => sku.category)
       categories = [...new Set(categories)]
-      categories = categories.sort(() => Math.random() - 0.5)
+      categories = this.randomize(categories)
       const sections = categories.reduce((acc, cur) => {
         acc[cur] = group.skus.filter(sku => sku.category === cur)
         return acc
@@ -654,7 +657,7 @@ const Begin = (function (data) {
     }
 
     initialize(json) {
-      this.configStr = ["projectId==jumia-d080c|messagingSenderId==877411630892|apiKey==AIzaSyCUP5ISID9Jh7-lm5R0k-HcOopqt8u-eyk|appId==1:877411630892:web:f7b7a9d6bbcfadb2", "projectId==jumia-og|messagingSenderId==502706301371|apiKey==AIzaSyAT9KiJMaEGcMK1F87-eanWtE-z0_-Lw2s|appId==1:502706301371:web:79fea8a63ea2581c567c9e", "projectId==jumia-bmtn2|messagingSenderId==875946805177|apiKey==AIzaSyAPvFJ9vtXynxudD9a-D7yhhEl-2rvEctA|appId==1:875946805177:web:a4adeca0b15e6b38", "projectId==jumia-br|messagingSenderId==114843399424|apiKey==AIzaSyCg3xSlGNcHzxpHq05HPwN0IpRw5JnKc74|appId==1:114843399424:web:1a5b9cb9aa574f579cefe5", "projectId==jumia-stor|messagingSenderId==659989278147|apiKey==AIzaSyB1N3LqxTcLPldBjKkQiiTJR8wy4f7IbJM|appId==1:659989278147:web:25d4693699d8aa0d", "projectId==jumia-89cc5|messagingSenderId==650879520928|apiKey==AIzaSyCBK409LGgtZk-RI9VXDQrHe8_FGo9lFeo|appId==1:650879520928:web:a603d1d6a8904b5e", "projectId==jumia-brnk|messagingSenderId==632015048847|apiKey==AIzaSyAfQc3JLSluNogTDwiHXy_pLJHmRd3Ufxw|appId==1:632015048847:web:34f74684ef297532"]
+      this.configStr = ["projectId==jumia-vote-deals|messagingSenderId==15013363201|apiKey==AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU|appId==1:15013363201:web:d8ed9ec2a4f2f331d50a00",]
       this.db_idx = 0
     }
 
@@ -739,13 +742,13 @@ const Begin = (function (data) {
 })
 
 const config = {
-  apiKey: "AIzaSyAA8dQEt-yZnDyY3Lra8lndRJ3LWNYVW0o",
-  authDomain: "jumia-c15a3.firebaseapp.com",
-  databaseURL: "https://jumia-c15a3.firebaseio.com",
-  projectId: "jumia-c15a3",
-  storageBucket: "jumia-c15a3.appspot.com",
-  messagingSenderId: "295115190934",
-  appId: "1:295115190934:web:de0b33b53a514c3c",
+  apiKey: "AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU",
+  authDomain: "jumia-vote-deals.firebaseapp.com",
+  projectId: "jumia-vote-deals",
+  storageBucket: "jumia-vote-deals.appspot.com",
+  messagingSenderId: "15013363201",
+  appId: "1:15013363201:web:d8ed9ec2a4f2f331d50a00",
+  measurementId: "G-GNT4HGW9Z3"
 }
 
 const feature_box = Featurebox({ config, name: "vote_deals" })

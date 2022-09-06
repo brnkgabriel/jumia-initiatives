@@ -1,0 +1,3 @@
+- Create v1 (without incentive) & v2 (with incentive)
+- get a separate tab with the emails of customers who vote for retargetting
+- Tie it to incentive

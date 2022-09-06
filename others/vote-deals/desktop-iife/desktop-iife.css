@@ -16,7 +16,7 @@
   --bg-color: #f5f5f5;
   --bg-color-darker: #eaeded;
   --font-color: #282828;
-  --campaign-color: #E94D22;
+  --campaign-color: #000;
   --barred-price: #75757a;
   --jumia-cta: #f68b1e;
   --discount-bg: #feefde;
@@ -93,19 +93,21 @@ body {
 
 
 #initiative .-banner .-how-it-works {
-  background-color: var(--campaign-color);
+  background-color: var(--font-color);
   color: white;
   bottom: 8px;
   right: 8px;
-  padding: 8px;
+  padding: 4px 8px;
   font-weight: 500;
   border-bottom-right-radius: 4px;
   border-top-left-radius: 4px;
   z-index: 3;
-  box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+  box-shadow: 0 1px 5px 0 rgba(0,0,0,0.2);
   cursor: pointer;
   transform: scale(1);
-  line-height: 1;
+  transform-origin: bottom right;
+  width: 187px;
+  height: 39px;
 }
 
 #initiative .-banner.-show .-how-it-works {
@@ -193,11 +195,11 @@ body {
 
 .-tabs .-all-tabs {
   z-index: 1;
-  width: calc(100% - 200px);
+  width: calc(100% - 100px);
   margin: 0 auto;
   overflow: hidden;
-  border-right: 1px dashed rgba(40,40,40,0.5);
-  border-left: 1px dashed rgba(40,40,40,0.5);
+  /* border-right: 1px dashed rgba(40,40,40,0.5);
+  border-left: 1px dashed rgba(40,40,40,0.5); */
   height: 53px;
   text-align: left;
 }
@@ -311,13 +313,14 @@ body {
   height: 40px;
   background-color: rgba(40,40,40,0.5);
   border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%) scale(1);
-  left: 30px;
+  top: 9px;
+  transform: translateY(0%) scale(1);
+  left: 9px;
   z-index: 1;
   cursor: pointer;
   box-shadow: 0 1px 1px 0 rgb(0 0 0 / 20%);
   overflow: hidden;
+  display: none;
 }
 
 
@@ -326,12 +329,12 @@ body {
 }
 
 .-control:active {
-  transform: translateY(-50%) scale(0.96);
+  transform: translateY(0%) scale(0.96);
 }
 
 .-control.-next {
   left: unset;
-  right: 90px;
+  right: 9px;
 }
 
 .-control::before {
@@ -390,13 +393,9 @@ body {
 
 #initiative .-section {
   padding: 16px 0;
+  padding-top: unset;
 }
-/* #initiative .-section:nth-child(odd) {
-  background-color: var(--blue-bg);
-}
-#initiative .-section:nth-child(even) {
-  background-color: var(--red-bg);
-} */
+
 /* #initiative .-section:nth-child(even) .-cta{
   background-color: var(--font-color);
 } */
@@ -455,11 +454,8 @@ body {
   max-height: 180px;
   margin-top: unset;
 }
-.-voted .-sku:not(.-sku-voted) {
-  opacity: 0.5;
-}
 .-voted .-sku:not(.-sku-voted) .-cta {
-  background-color: lightgray !important;
+  background-color: lightgray;
   color: gray;
   cursor: default;
   pointer-events: none;
@@ -550,62 +546,47 @@ body {
 .-sku .-tags .-count {
   font-weight: 600;
 }
-/* [data-color="orange"] .-vote-btn {
-  background-color: var(--orange) !important;
-  color: white;
-} */
-/* [data-color="red"] .-vote-btn {
-  background-color: var(--red) !important;
-  color: white;
-}
-
-[data-color="green"] .-vote-btn {
-  background-color: var(--green) !important;
-  color: white;
-} */
-[data-color="orange"] .-tags {
+.-tags[data-color="orange"] {
   background-color: var(--orange);
 }
-[data-color="orange"] .-tags .-count {
+.-tags[data-color="orange"] .-count {
   color: white;
 }
-[data-color="orange"] .-tags .-arrow::before {
+.-sku .-tags[data-color="orange"] .-arrow::before {
   content: unset;
 }
-[data-color="orange"] .-tags .-arrow::after {
+.-sku .-tags[data-color="orange"] .-arrow::after {
   transform: translate(-50%, -45%) rotate(90deg);
   background-color: white;
   height: 100%;
 }
-[data-color="red"] .-tags {
+.-tags[data-color="red"] {
   background-color: var(--red);
 }
-[data-color="red"] .-tags .-count {
+.-tags[data-color="red"] .-count {
   color: white;
 }
-[data-color="red"] .-tags .-arrow {
+.-sku .-tags[data-color="red"] .-arrow {
   transform: rotate(180deg);
 }
-[data-color="red"] .-tags .-arrow::before,
-[data-color="red"] .-tags .-arrow::after {
+.-sku .-tags[data-color="red"] .-arrow::before,
+.-sku .-tags[data-color="red"] .-arrow::after {
   border-color: white;
 }
-[data-color="red"] .-tags .-arrow::after {
+.-sku .-tags[data-color="red"] .-arrow::after {
   background-color: white;
 }
-
-
-[data-color="green"] .-tags {
+.-tags[data-color="green"] {
   background-color: var(--green);
 }
-[data-color="green"] .-tags .-count {
+.-tags[data-color="green"] .-count {
   color: white;
 }
-[data-color="green"] .-tags .-arrow::before,
-[data-color="green"] .-tags .-arrow::after {
+.-sku .-tags[data-color="green"] .-arrow::before,
+.-sku .-tags[data-color="green"] .-arrow::after {
   border-color: white;
 }
-[data-color="green"] .-tags .-arrow::after {
+.-sku .-tags[data-color="green"] .-arrow::after {
   background-color: white;
 }
 .-sku .-img .-shadow {
@@ -971,7 +952,7 @@ body {
 
 .-rules_eligibility {
   font-size: .9em;
-  background-color: var(--campaign-color);
+  background-color: var(--font-color);
   top: 0;
   padding: 16px 0;
   width: 35%;

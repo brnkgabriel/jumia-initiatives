@@ -5,7 +5,7 @@
   --bg-color: #f5f5f5;
   --bg-color-darker: #eaeded;
   --font-color: #282828;
-  --campaign-color: #000;
+  --campaign-color: #E94D22;
   --barred-price: #75757a;
   --jumia-cta: #f68b1e;
   --discount-bg: #feefde;
@@ -95,7 +95,7 @@ body #banner-placement-top,
 
 
 #initiative .-banner .-how-it-works {
-  background-color: var(--font-color);
+  background-color: var(--campaign-color);
   color: white;
   bottom: 8px;
   right: 8px;
@@ -108,7 +108,6 @@ body #banner-placement-top,
   cursor: pointer;
   transform: scale(1);
   transform-origin: bottom right;
-  width: 129px;
   height: 27px;
 }
 
@@ -458,6 +457,9 @@ body #banner-placement-top,
   max-height: 180px;
   margin-top: unset;
 }
+.-voted .-sku:not(.-sku-voted) {
+  opacity: 0.5;
+}
 .-voted .-sku:not(.-sku-voted) .-cta {
   background-color: lightgray;
   color: gray;
@@ -549,47 +551,62 @@ body #banner-placement-top,
 .-sku .-tags .-count {
   font-weight: 600;
 }
-.-tags[data-color="orange"] {
-  background-color: var(--orange);
-}
-.-tags[data-color="orange"] .-count {
+/* [data-color="orange"] .-vote-btn {
+  background-color: var(--orange) !important;
   color: white;
 }
-.-sku .-tags[data-color="orange"] .-arrow::before {
+[data-color="red"] .-vote-btn {
+  background-color: var(--red) !important;
+  color: white;
+}
+
+[data-color="green"] .-vote-btn {
+  background-color: var(--green) !important;
+  color: white;
+} */
+[data-color="orange"] .-tags {
+  background-color: var(--orange);
+}
+[data-color="orange"] .-tags .-count {
+  color: white;
+}
+[data-color="orange"] .-tags .-arrow::before {
   content: unset;
 }
-.-sku .-tags[data-color="orange"] .-arrow::after {
+[data-color="orange"] .-tags .-arrow::after {
   transform: translate(-50%, -45%) rotate(90deg);
   background-color: white;
   height: 100%;
 }
-.-tags[data-color="red"] {
+[data-color="red"] .-tags {
   background-color: var(--red);
 }
-.-tags[data-color="red"] .-count {
+[data-color="red"] .-tags .-count {
   color: white;
 }
-.-sku .-tags[data-color="red"] .-arrow {
+[data-color="red"] .-tags .-arrow {
   transform: rotate(180deg);
 }
-.-sku .-tags[data-color="red"] .-arrow::before,
-.-sku .-tags[data-color="red"] .-arrow::after {
+[data-color="red"] .-tags .-arrow::before,
+[data-color="red"] .-tags .-arrow::after {
   border-color: white;
 }
-.-sku .-tags[data-color="red"] .-arrow::after {
+[data-color="red"] .-tags .-arrow::after {
   background-color: white;
 }
-.-tags[data-color="green"] {
+
+
+[data-color="green"] .-tags {
   background-color: var(--green);
 }
-.-tags[data-color="green"] .-count {
+[data-color="green"] .-tags .-count {
   color: white;
 }
-.-sku .-tags[data-color="green"] .-arrow::before,
-.-sku .-tags[data-color="green"] .-arrow::after {
+[data-color="green"] .-tags .-arrow::before,
+[data-color="green"] .-tags .-arrow::after {
   border-color: white;
 }
-.-sku .-tags[data-color="green"] .-arrow::after {
+[data-color="green"] .-tags .-arrow::after {
   background-color: white;
 }
 .-sku .-img .-shadow {
@@ -714,7 +731,7 @@ body #banner-placement-top,
 
 .-rules_eligibility {
   font-size: .9em;
-  background-color: var(--font-color);
+  background-color: var(--campaign-color);
   top: 0;
   width: 100%;
   left: 105%;

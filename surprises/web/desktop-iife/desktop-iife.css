@@ -631,6 +631,7 @@ svg.-giftbox .st3 {
 #initiative .-sku .-unveiled {
   bottom: 8px;
   right: 8px;
+  margin-bottom: unset;
 }
 
 #initiative .-sku .-cta {
