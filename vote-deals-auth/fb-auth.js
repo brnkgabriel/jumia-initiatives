@@ -263,34 +263,8 @@ var Featurebox = function (json) {
       this.json = json
       this.app = firebase.initializeApp(json.config);
       this.firestore = this.app.firestore();
-      this.auth = this.app.auth();
-
-      this.auth.onAuthStateChanged((user) => {
-        if (user) {
-          console.log("signed in with user object as", user);
-        } else {
-          this.signIn();
-        }
-        console.log("user from fb-auth is", user);
-      });
+      
       this.getDoc(util.COLLECTION, "data");
-    }
-
-    signIn() {
-      console.log("this.json is", this.json)
-      this.auth
-        .signInWithEmailAndPassword(this.json.email, this.json.password)
-        .then((user) => console.log("signed"))
-        .catch((err) => {
-          if (err.code === "auth/user-not-found") this.signUp();
-        });
-    }
-
-    signUp() {
-      this.auth
-        .createUserWithEmailAndPassword(this.json.email, this.json.password)
-        .then((user) => console.log("created"))
-        .catch((err) => console.log(err));
     }
 
     getDoc(collection, docRef) {
@@ -302,11 +276,6 @@ var Featurebox = function (json) {
           pubsub.emit(util.DATA_ARRIVES, doc.exists ? doc.data() : {})
         )
         .catch((err) => console.error(err));
-    }
-
-    setDoc(collection, docRef, data) {
-      const ref = this.firestore.collection(collection).doc(docRef);
-      return ref.set(data, { merge: true });
     }
   }
 
@@ -1722,6 +1691,5 @@ var Featurebox = function (json) {
     is_mobile: util.isMobile,
     PRODUCTS_DISPLAYED: util.PRODUCTS_DISPLAYED,
     getDocument: database.getDoc,
-    saveDocument: database.setDoc,
   };
 };

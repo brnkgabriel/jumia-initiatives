@@ -688,21 +688,14 @@ const Begin = (function (data) {
       let app = firebase.initializeApp(json, json.projectId)
       let auth = app.auth();
 
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          console.log("signed in with user object as", user);
-        } else {
-          this.signIn(auth);
-        }
-        console.log("user from id",json.projectId, "is", user);
-      });
-      let appJSON = { firestore: app.firestore(), auth }
+      auth.onAuthStateChanged((user) => !user && this.signIn(auth));
+
+      let appJSON = { firestore: app.firestore() }
       return { ...json, ...appJSON }
     }
 
     
     signIn(auth) {
-      console.log("this.json is", this.json)
       auth
         .signInWithEmailAndPassword(this.json.email, this.json.password)
         .then((user) => console.log("signed"))
@@ -756,7 +749,6 @@ const Begin = (function (data) {
     }
 
     save(firestore, data) {
-      // return feature_box.saveDocument(this.ID, "data", data)
       return firestore.collection(this.ID).doc("data")
       .set(data, { merge: true })
     }
@@ -798,8 +790,7 @@ const interval = setInterval(() => {
         measurementId: "G-GNT4HGW9Z3"
       }
       
-      console.log("email", email, "password", password)
-      feature_box = Featurebox({ config, name: "vote_deals", email, password })
+      feature_box = Featurebox({ config, name: "vote_deals" })
       
       feature_box.pubsub.subscribe(feature_box.DATA_ARRIVES, data => {
         Begin({...data, email, password})
