@@ -657,6 +657,7 @@ const Begin = (function (data) {
     }
 
     initialize(json) {
+      this.json = json
       this.configStr = ["projectId==jumia-vote-deals|messagingSenderId==15013363201|apiKey==AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU|appId==1:15013363201:web:d8ed9ec2a4f2f331d50a00",]
       this.db_idx = 0
     }
@@ -685,8 +686,36 @@ const Begin = (function (data) {
 
     firestore(json) {
       let app = firebase.initializeApp(json, json.projectId)
-      let appJSON = { firestore: app.firestore() }
+      let auth = app.auth();
+
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          console.log("signed in with user object as", user);
+        } else {
+          this.signIn(auth);
+        }
+        console.log("user from id",json.projectId, "is", user);
+      });
+      let appJSON = { firestore: app.firestore(), auth }
       return { ...json, ...appJSON }
+    }
+
+    
+    signIn(auth) {
+      console.log("this.json is", this.json)
+      auth
+        .signInWithEmailAndPassword(this.json.email, this.json.password)
+        .then((user) => console.log("signed"))
+        .catch((err) => {
+          if (err.code === "auth/user-not-found") this.signUp(auth);
+        });
+    }
+
+    signUp() {
+      auth
+        .createUserWithEmailAndPassword(this.json.email, this.json.password)
+        .then((user) => console.log("created"))
+        .catch((err) => console.log(err));
     }
 
     load(from) {
@@ -727,6 +756,7 @@ const Begin = (function (data) {
     }
 
     save(firestore, data) {
+      // return feature_box.saveDocument(this.ID, "data", data)
       return firestore.collection(this.ID).doc("data")
       .set(data, { merge: true })
     }
@@ -772,7 +802,7 @@ const interval = setInterval(() => {
       feature_box = Featurebox({ config, name: "vote_deals", email, password })
       
       feature_box.pubsub.subscribe(feature_box.DATA_ARRIVES, data => {
-        Begin(data)
+        Begin({...data, email, password})
       })
     }
   }
