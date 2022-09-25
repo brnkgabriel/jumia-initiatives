@@ -25,6 +25,7 @@ const Begin = (function (data) {
       this.redirect = "https://www.jumia.com.ng/customer/account/login/?return=https%3A%2F%2Fwww.jumia.com.ng%2Fsp-vote%2F"
       this.config = json.config;
       this.domain = json.domain;
+      this.user = null
 
 
       this.num2Array = num => Array.from(Array(num).keys())
@@ -54,6 +55,7 @@ const Begin = (function (data) {
       this.isATab = (el) => el.classList.contains("-tab")
       this.pad = (time) => (time.toString().length == 1 ? "0" + time : time)
       this.skuRows = () => this.all(".-sku_row")
+      this.capitalize = (str) => str[0].toUpperCase() + str.slice(1);
       this.skuRow = (time) => this.el('.-sku_row[data-time="' + time + '"]')
       this.skuID = (sku) => sku.category + "_" + sku.sku + "_" + sku.time
       this.groupID = (category, time) => this.id(category + "-" + this.fullDate(time).toLowerCase().split(" ").join("-"), "-")
@@ -311,8 +313,6 @@ const Begin = (function (data) {
       this.time = new Time(json)
       this.tabs = new Tabs(json)
       this.skuRows = new SKURows(json) 
-
-      this.database.load(this.FROM_INITIALIZE)
       
       this.data = this.getData(json, { key: "initiative", name: this.NAME }) 
       this.tandcs = this.getData(json, { key: "initiative", name: this.TANDC }) 
@@ -688,7 +688,10 @@ const Begin = (function (data) {
       let app = firebase.initializeApp(json, json.projectId)
       let auth = app.auth();
 
-      auth.onAuthStateChanged((user) => !user && this.signIn(auth));
+      auth.onAuthStateChanged((user) => {
+        this.user = user
+        this.signIn(auth)
+      })
 
       let appJSON = { firestore: app.firestore() }
       return { ...json, ...appJSON }
@@ -696,19 +699,22 @@ const Begin = (function (data) {
 
     
     signIn(auth) {
+      console.log("signing in")
       auth
         .signInWithEmailAndPassword(this.json.email, this.json.password)
-        .then((user) => console.log("signed"))
+        .then((user) => this.load(this.FROM_INITIALIZE))
         .catch((err) => {
           if (err.code === "auth/user-not-found") this.signUp(auth);
         });
     }
 
-    signUp() {
+    signUp(auth) {
+      console.log("signing up")
       auth
         .createUserWithEmailAndPassword(this.json.email, this.json.password)
-        .then((user) => console.log("created"))
-        .catch((err) => console.log(err));
+        .then((user) => {
+          console.log("account created") 
+        }).catch((err) => console.log(err));
     }
 
     load(from) {
@@ -741,11 +747,16 @@ const Begin = (function (data) {
     }
 
     submit(data) {
-      this.configs.map(config => {
-        this.save(config.firestore, data)
-        .then(() => console.log("successfully saved in", config.projectId))
-        .catch(err => console.error("error submitting document", err))
-      })
+      console.log("user is", this.user)
+      if (this.user) {
+        this.configs.map(config => {
+          this.save(config.firestore, data)
+          .then(() => console.log("successfully saved in", config.projectId))
+          .catch(err => console.error("error submitting document", err))
+        })
+      } else {
+        console.log("you need to be signed in to store data")
+      }
     }
 
     save(firestore, data) {
@@ -793,6 +804,7 @@ const interval = setInterval(() => {
       feature_box = Featurebox({ config, name: "vote_deals" })
       
       feature_box.pubsub.subscribe(feature_box.DATA_ARRIVES, data => {
+        console.log("data ***has*** arrived")
         Begin({...data, email, password})
       })
     }

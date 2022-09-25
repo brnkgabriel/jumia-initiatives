@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="./desktop-iife.css">
-  <title>Vote Deals</title>
+  <title>Flash Sale</title>
 </head>
 
 <body class="-localhost">
@@ -14,10 +14,10 @@
     <div class="-row -banner -top -posrel">
       <div class="-how-it-works -posabs">
         <span class="-posabs -preloader -loading"></span>
-        <span class="-txt">How It Works (T&Cs)</span>
+        <span class="-posabs -txt">Terms & Conditions</span>
       </div>
       <div class="-rules_eligibility -posabs -animate">
-        <div class="-title">How It Works (T&Cs)</div>
+        <div class="-title">Terms & Conditions</div>
         <div class="-re -rules"></div>
       </div>
       <a href="/sp-mobile-apps" class="-img -posrel">
@@ -25,31 +25,22 @@
         <img class="lazy-image" alt="top banner" />
       </a>
     </div>
-    <div class="-tabs -possti" id="top">
-      <div class="-control -prev -posabs">
-        <span class="-posabs -preloader -loading"></span>
-      </div>
-      <div class="-control -next -posabs">
-        <span class="-posabs -preloader -loading"></span>
-      </div>
-      <div class="-tabs-countdown">
+    <div class="-main-el" id="top">
+      <div class="-tabs -possti">
+        <div class="-control -prev -posabs">
+          <span class="-posabs -preloader -loading"></span>
+        </div>
+        <div class="-control -next -posabs">
+          <span class="-posabs -preloader -loading"></span>
+        </div>
         <div class="-all-tabs -animate -posrel"></div>
-        <div class="-countdown">
-          <div class="-txt">updates in</div>
-          <div id="clock"></div>
+        <div class="-countdown-row -posrel">
+          <span class="-posabs -preloader -loading"></span>
+          <span class="-time">Starts in 00h : 00m : 00s</span>
         </div>
       </div>
-      <div class="-countdown-row -posrel">
-        <span class="-posabs -preloader -loading"></span>
-        <span class="-time">Starts in 00h : 00m : 00s</span>
-      </div>
-    </div>
-    <div class="-main-el">
       <div class="-skus -animate">
         <div class="-sku_row -posrel _row-1623366000000 active">
-          <div class="-title">
-            <span class="-posabs -preloader -loading"></span>
-          </div>
           <a href="#" target="_blank" class="-sku -posrel -available">
             <span class="-posabs -preloader -loading"></span>
           </a><a href="#" target="_blank" class="-sku -posrel -available">
@@ -62,25 +53,10 @@
     </div>
     <div id="app"></div>
   </div>
-  <script>
-    var store = {
-      customer: {
-        email: 'ibironkeolanrewaju@gmail.com'
-      },
-      headerInfo: {
-        customer: {
-          firstName: 'brnk'
-        }
-      }
-    }
-  </script>
   <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
-  <script src="./fb-auth.js"></script>
-  <!-- <script src="./fb.js"></script> -->
-  <!-- <script src="./desktop-iife.js"></script> -->
-  <script src="./script.js"></script>
+  <script src="https://jumia-app-vision.web.app/featurebox/fb.js"></script>
+  <script src="./desktop-iife.js"></script>
 </body>
 
 </html>

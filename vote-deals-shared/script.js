@@ -52,6 +52,7 @@ const Begin = (function (data) {
       this.isPast = (time) => Date.now() > time && Date.now() > this.endTime(time)
       this.isFuture = (time, past) => past.indexOf(time) === -1;
       this.isATab = (el) => el.classList.contains("-tab")
+      this.capitalize = (str) => str[0].toUpperCase() + str.slice(1);
       this.pad = (time) => (time.toString().length == 1 ? "0" + time : time)
       this.skuRows = () => this.all(".-sku_row")
       this.skuRow = (time) => this.el('.-sku_row[data-time="' + time + '"]')

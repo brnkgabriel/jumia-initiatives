@@ -1674,7 +1674,7 @@ var Featurebox = function (json) {
       new FilterBar();
       new AppliedFilters();
     }
-  };
+  }
 
   var pubsub = new PubSub();
   var util = new Util();
