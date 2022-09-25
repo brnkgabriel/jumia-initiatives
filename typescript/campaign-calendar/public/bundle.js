@@ -1,1 +1,2 @@
-(()=>{"use strict";const e=document.querySelector("form");e.addEventListener("submit",(t=>{t.preventDefault();const o=(e=>{const t=e.querySelectorAll("input");let o={};return t.forEach((e=>{o[e.id]=e.value})),o})(e);console.log(o)}))})();
+(()=>{"use strict";const a=window.Featurebox({config:{apiKey:"AIzaSyAA8dQEt-yZnDyY3Lra8lndRJ3LWNYVW0o",authDomain:"jumia-c15a3.firebaseapp.com",databaseURL:"https://jumia-c15a3.firebaseio.com",projectId:"jumia-c15a3",storageBucket:"jumia-c15a3.appspot.com",messagingSenderId:"295115190934",appId:"1:295115190934:web:de0b33b53a514c3c"}});a.pubsub.subscribe(a.FETCHED_DATA,(a=>{localStorage.setItem("remoteData",JSON.stringify(a))}))})();
+//# sourceMappingURL=bundle.js.map

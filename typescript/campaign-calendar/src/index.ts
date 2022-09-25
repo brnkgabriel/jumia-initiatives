@@ -1,12 +1,16 @@
-import { formData } from "./forms";
+import { config, constants } from "./core/constants";
+import { IRemoteConfig, IRemoteData } from "./core/interfaces/config";
+import { ICampaignCalendar, MarketingTypes } from "./core/interfaces/data";
+import { Util } from "./core/util";
 
-const form = document.querySelector("form")!
+const wind = window as any
+const fbox = wind.Featurebox({ config })
+let util: Util
 
-form.addEventListener("submit", e => {
-  e.preventDefault()
-  const data = formData(form)
-  console.log(data)
+fbox.pubsub.subscribe(fbox.FETCHED_DATA, (data: any) => {
+  const remoteData:IRemoteData = data as IRemoteData
+  util = new Util(remoteData)
+  const calendar:any[] = util.getData(constants.NAME)
+  const times: number[] = util.times(calendar)
+  console.log("times", times)
 })
-
-const person: any = {}
-console.log(person.speak())
