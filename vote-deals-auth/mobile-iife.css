@@ -393,11 +393,17 @@ body #banner-placement-top,
   display: block;
 }
 
+.-sku-group {
+  height: 550px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 #initiative .-section {
   padding-top: unset;
   display: inline-block;
   width: calc(100% - 32px);
   margin: 0 4px;
+  vertical-align: top;
 }
 /* #initiative .-section:nth-child(even) .-cta{
   background-color: var(--font-color);

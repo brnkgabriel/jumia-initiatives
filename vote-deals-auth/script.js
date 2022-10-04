@@ -92,24 +92,22 @@ const Begin = (function (data) {
       }
     }
 
-    price(raw) {
-      const num = this.numFromStr(raw);
-      return this.CURRENCY + " " + parseInt(num).toLocaleString();
-    }
+    isANumber(price) {
+      const pieces = price.split(" ")
+      const num = pieces.filter(piece => !isNaN(piece))[0]
 
-    numFromStr(str) {
-      var match = str.match(/\d/g);
-      return match ? match.join("") : 0;
+      return !isNaN(num) ? num : null
     }
 
     discount(_old, _new) {
-      if(isNaN(parseInt(_old))) {
-        _old = _old.split(" ")[1]
-        _new = _new.split(" ")[1]
-      } 
-      var diff = parseInt(_old) - parseInt(_new);
-      var ratio = (diff * 100) / parseInt(_old);
-      return !isNaN(ratio) ? "-" + Math.round(ratio) + "%" : "";
+      const oldP = this.isANumber(_old)
+      const newP = this.isANumber(_new)
+      if (!isNaN(oldP)) {
+        var diff = parseInt(oldP) - parseInt(newP);
+        var ratio = (diff * 100) / parseInt(oldP);
+        return !isNaN(ratio) ? "-" + Math.round(ratio) + "%" : "";
+      }
+      return null
     }
 
     replacePattern(pattern, str) {
@@ -152,7 +150,15 @@ const Begin = (function (data) {
     times(skus) {
       var times = skus.map((sku) => +new Date(sku.time));
       var unique_times = Array.from(new Set(times));
-      return unique_times.sort((a, b) => a - b);
+      const timeStr = this.platform().dateRange
+      const timePieces = timeStr.split("-")
+      const start = +new Date(timePieces[0])
+      const end = +new Date(timePieces[1])
+
+      const filtered = unique_times.filter(time => time >= start && time <= end)
+
+      console.log("start time", start, "end time", end, "unique_times", unique_times, "filtered times", filtered)
+      return filtered.sort((a, b) => a - b);
     }
 
     pastAndFutureTimes(times) {
@@ -214,13 +220,15 @@ const Begin = (function (data) {
 
     platform() {
       var is_mobile = "ontouchstart" in window;
+      var dateRange = this.config[this.ID + "_date_range"]
       var banner = is_mobile
         ? this.config[this.ID + "_mobile_banner"]
         : this.config[this.ID + "_desktop_banner"];
       var live_link = is_mobile
         ? this.config[this.ID + "_deeplink"]
         : this.domain.host + "/" + this.config.download_apps_page;
-      return { banner, live_link };
+      var currencyPosition = this.config.currency_position
+      return { banner, live_link, dateRange, currencyPosition };
     }
 
     show(parent) {
@@ -546,20 +554,23 @@ const Begin = (function (data) {
 
     sectionHtml(sectionSKUs, key) {
       const sku1 = sectionSKUs[0]
-      let html = `<div class="-section" data-group-id="${this.groupID(sku1.category, sku1.time)}"><div class="-title">${key}</div>`
+      let html = `<div class="-section" data-group-id="${this.groupID(sku1.category, sku1.time)}"><div class="-title">${key}</div><div class="-sku-group">`
       html += sectionSKUs.map(this.singleHtml.bind(this)).join("");
-      html += `</div>`;
+      html += `</div></div>`;
       return html;
     }
 
     singleHtml(sku) {
-      var oldPrice = this.price(sku.old_price);
-      var newPrice = this.price(sku.new_price);
+      var oldPrice = sku.old_price
+      var newPrice = sku.new_price
       var discount = this.discount(sku.old_price, sku.new_price);
+
+      const discountHTML = this.isANumber(sku.old_price) === null ? "" : `<div class="-discount -price -posabs">${discount}</div>`
+      const oldPriceHTML = this.isANumber(sku.old_price) === null ? "" : `<div class="-price -old">${oldPrice}</div>`
 
       var cta = this.loggedIn ? `<div class="-cta -posabs ${this.VOTE_CLASS}">vote</div>` : `<a class="-redirect -posabs" href="${this.redirect}">log in</a>`
       
-      return `<div class="-sku -posrel" data-votes="0" data-id="${this.skuID(sku)}" data-color="orange" data-time="${sku.time}" data-sku="${sku.sku}" data-category="${sku.category}"><a href="${sku.pdp}" class="-img -posabs"><div class="-posabs -shadow"><span class="-posabs">voted</span></div><img class="lazy-image loaded" data-src="${sku.image}" alt="sku_img"/><div class="-preloader -posabs"></div></a><div class="-details -posabs"><div class="-name">${sku.name}</div><div class="-desc">${sku.desc}</div><div class="-prices"><div class="-price -new">${newPrice}</div><div class="-price -old">${oldPrice}</div></div><div class="-discount -price -posabs">${discount}</div></div>${cta}<div class="-tags -posabs">${this.voteHTML(0)}</div></div>`  
+      return `<div class="-sku -posrel" data-votes="0" data-id="${this.skuID(sku)}" data-color="orange" data-time="${sku.time}" data-sku="${sku.sku}" data-category="${sku.category}"><a href="${sku.pdp}" class="-img -posabs"><div class="-posabs -shadow"><span class="-posabs">voted</span></div><img class="lazy-image loaded" data-src="${sku.image}" alt="sku_img"/><div class="-preloader -posabs"></div></a><div class="-details -posabs"><div class="-name">${sku.name}</div><div class="-desc">${sku.desc}</div><div class="-prices"><div class="-price -new">${newPrice}</div>${oldPriceHTML}</div>${discountHTML}</div>${cta}<div class="-tags -posabs">${this.voteHTML(0)}</div></div>`  
     }
 
     voteHTML(count) {
@@ -773,6 +784,7 @@ const Begin = (function (data) {
   
   new Controller(data)
 })
+
 
 const currentUser = {
   isLoggedIn: false,

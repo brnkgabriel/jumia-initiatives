@@ -377,8 +377,6 @@ body {
 
 #initiative .-sku {
   text-align: left;
-  width: calc((100% - 16px) / 3);
-  margin: 0px 4px;
   background-color: white;
   position: relative;
   border-radius: 4px;
@@ -405,14 +403,6 @@ body {
   font-weight: 600;
   padding-bottom: unset;
   text-decoration: underline;
-}
-
-#initiative .-sku:nth-child(2) {
-  margin-left: unset;
-}
-
-#initiative .-sku:last-child {
-  margin-right: unset;
 }
 
 #initiative .-sku:hover {
@@ -442,10 +432,20 @@ body {
   background-color: var(--bg-color);
   text-align: center;
 }
+
+#initiative .-sku-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  column-gap: 8px;
+  row-gap: 8px;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
 .-sku {
   text-align: left;
-  width: calc(97% / 3);
-  margin: 1% calc(3% / 6);
+  width: calc((100% - 16px) / 3);
   background-color: #fff;
   position: relative;
   border-radius: 5px;

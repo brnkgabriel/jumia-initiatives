@@ -57,6 +57,7 @@ const Begin = (function (data) {
       this.skuRow = (time) => this.el('.-sku_row[data-time="' + time + '"]')
       this.skuID = (sku) => sku.category + "_" + sku.sku + "_" + sku.time
       this.groupID = (category, time) => this.id(category + "-" + this.fullDate(time).toLowerCase().split(" ").join("-"), "-")
+      this.capitalize = (str) => str[0].toUpperCase() + str.slice(1);
       this.voteTxt = count => `${count} vote(s)`
       this.randomize = list => list.sort(() => Math.random() - 0.5)
       this.reverse = list => list.reverse()

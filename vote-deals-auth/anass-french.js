@@ -25,6 +25,7 @@ const Begin = (function (data) {
       this.redirect = "https://www.jumia.com.ng/customer/account/login/?return=https%3A%2F%2Fwww.jumia.com.ng%2Fsp-vote%2F"
       this.config = json.config;
       this.domain = json.domain;
+      this.user = null
 
 
       this.num2Array = num => Array.from(Array(num).keys())
@@ -52,9 +53,9 @@ const Begin = (function (data) {
       this.isPast = (time) => Date.now() > time && Date.now() > this.endTime(time)
       this.isFuture = (time, past) => past.indexOf(time) === -1;
       this.isATab = (el) => el.classList.contains("-tab")
-      this.capitalize = (str) => str[0].toUpperCase() + str.slice(1);
       this.pad = (time) => (time.toString().length == 1 ? "0" + time : time)
       this.skuRows = () => this.all(".-sku_row")
+      this.capitalize = (str) => str[0].toUpperCase() + str.slice(1);
       this.skuRow = (time) => this.el('.-sku_row[data-time="' + time + '"]')
       this.skuID = (sku) => sku.category + "_" + sku.sku + "_" + sku.time
       this.groupID = (category, time) => this.id(category + "-" + this.fullDate(time).toLowerCase().split(" ").join("-"), "-")
@@ -91,24 +92,22 @@ const Begin = (function (data) {
       }
     }
 
-    price(raw) {
-      const num = this.numFromStr(raw);
-      return this.CURRENCY + " " + parseInt(num).toLocaleString();
-    }
+    isANumber(price) {
+      const pieces = price.split(" ")
+      const num = pieces.filter(piece => !isNaN(piece))[0]
 
-    numFromStr(str) {
-      var match = str.match(/\d/g);
-      return match ? match.join("") : 0;
+      return !isNaN(num) ? num : null
     }
 
     discount(_old, _new) {
-      if(isNaN(parseInt(_old))) {
-        _old = _old.split(" ")[1]
-        _new = _new.split(" ")[1]
-      } 
-      var diff = parseInt(_old) - parseInt(_new);
-      var ratio = (diff * 100) / parseInt(_old);
-      return !isNaN(ratio) ? "-" + Math.round(ratio) + "%" : "";
+      const oldP = this.isANumber(_old)
+      const newP = this.isANumber(_new)
+      if (!isNaN(oldP)) {
+        var diff = parseInt(oldP) - parseInt(newP);
+        var ratio = (diff * 100) / parseInt(oldP);
+        return !isNaN(ratio) ? "-" + Math.round(ratio) + "%" : "";
+      }
+      return null
     }
 
     replacePattern(pattern, str) {
@@ -151,7 +150,15 @@ const Begin = (function (data) {
     times(skus) {
       var times = skus.map((sku) => +new Date(sku.time));
       var unique_times = Array.from(new Set(times));
-      return unique_times.sort((a, b) => a - b);
+      const timeStr = this.platform().dateRange
+      const timePieces = timeStr.split("-")
+      const start = +new Date(timePieces[0])
+      const end = +new Date(timePieces[1])
+
+      const filtered = unique_times.filter(time => time >= start && time <= end)
+
+      console.log("start time", start, "end time", end, "unique_times", unique_times, "filtered times", filtered)
+      return filtered.sort((a, b) => a - b);
     }
 
     pastAndFutureTimes(times) {
@@ -213,13 +220,15 @@ const Begin = (function (data) {
 
     platform() {
       var is_mobile = "ontouchstart" in window;
+      var dateRange = this.config[this.ID + "_date_range"]
       var banner = is_mobile
         ? this.config[this.ID + "_mobile_banner"]
         : this.config[this.ID + "_desktop_banner"];
       var live_link = is_mobile
         ? this.config[this.ID + "_deeplink"]
         : this.domain.host + "/" + this.config.download_apps_page;
-      return { banner, live_link };
+      var currencyPosition = this.config.currency_position
+      return { banner, live_link, dateRange, currencyPosition };
     }
 
     show(parent) {
@@ -312,8 +321,6 @@ const Begin = (function (data) {
       this.time = new Time(json)
       this.tabs = new Tabs(json)
       this.skuRows = new SKURows(json) 
-
-      this.database.load(this.FROM_INITIALIZE)
       
       this.data = this.getData(json, { key: "initiative", name: this.NAME }) 
       this.tandcs = this.getData(json, { key: "initiative", name: this.TANDC }) 
@@ -547,20 +554,23 @@ const Begin = (function (data) {
 
     sectionHtml(sectionSKUs, key) {
       const sku1 = sectionSKUs[0]
-      let html = `<div class="-section" data-group-id="${this.groupID(sku1.category, sku1.time)}"><div class="-title">${key}</div>`
+      let html = `<div class="-section" data-group-id="${this.groupID(sku1.category, sku1.time)}"><div class="-title">${key}</div><div class="-sku-group">`
       html += sectionSKUs.map(this.singleHtml.bind(this)).join("");
-      html += `</div>`;
+      html += `</div></div>`;
       return html;
     }
 
     singleHtml(sku) {
-      var oldPrice = this.price(sku.old_price);
-      var newPrice = this.price(sku.new_price);
+      var oldPrice = sku.old_price
+      var newPrice = sku.new_price
       var discount = this.discount(sku.old_price, sku.new_price);
+
+      const discountHTML = this.isANumber(sku.old_price) === null ? "" : `<div class="-discount -price -posabs">${discount}</div>`
+      const oldPriceHTML = this.isANumber(sku.old_price) === null ? "" : `<div class="-price -old">${oldPrice}</div>`
 
       var cta = this.loggedIn ? `<div class="-cta -posabs ${this.VOTE_CLASS}">vote</div>` : `<a class="-redirect -posabs" href="${this.redirect}">log in</a>`
       
-      return `<div class="-sku -posrel" data-votes="0" data-id="${this.skuID(sku)}" data-color="orange" data-time="${sku.time}" data-sku="${sku.sku}" data-category="${sku.category}"><a href="${sku.pdp}" class="-img -posabs"><div class="-posabs -shadow"><span class="-posabs">voted</span></div><img class="lazy-image loaded" data-src="${sku.image}" alt="sku_img"/><div class="-preloader -posabs"></div></a><div class="-details -posabs"><div class="-name">${sku.name}</div><div class="-desc">${sku.desc}</div><div class="-prices"><div class="-price -new">${newPrice}</div><div class="-price -old">${oldPrice}</div></div><div class="-discount -price -posabs">${discount}</div></div>${cta}<div class="-tags -posabs">${this.voteHTML(0)}</div></div>`  
+      return `<div class="-sku -posrel" data-votes="0" data-id="${this.skuID(sku)}" data-color="orange" data-time="${sku.time}" data-sku="${sku.sku}" data-category="${sku.category}"><a href="${sku.pdp}" class="-img -posabs"><div class="-posabs -shadow"><span class="-posabs">voted</span></div><img class="lazy-image loaded" data-src="${sku.image}" alt="sku_img"/><div class="-preloader -posabs"></div></a><div class="-details -posabs"><div class="-name">${sku.name}</div><div class="-desc">${sku.desc}</div><div class="-prices"><div class="-price -new">${newPrice}</div>${oldPriceHTML}</div>${discountHTML}</div>${cta}<div class="-tags -posabs">${this.voteHTML(0)}</div></div>`  
     }
 
     voteHTML(count) {
@@ -658,6 +668,7 @@ const Begin = (function (data) {
     }
 
     initialize(json) {
+      this.json = json
       this.configStr = ["projectId==jumia-vote-deals|messagingSenderId==15013363201|apiKey==AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU|appId==1:15013363201:web:d8ed9ec2a4f2f331d50a00",]
       this.db_idx = 0
     }
@@ -686,8 +697,35 @@ const Begin = (function (data) {
 
     firestore(json) {
       let app = firebase.initializeApp(json, json.projectId)
+      let auth = app.auth();
+
+      auth.onAuthStateChanged((user) => {
+        this.user = user
+        this.signIn(auth)
+      })
+
       let appJSON = { firestore: app.firestore() }
       return { ...json, ...appJSON }
+    }
+
+    
+    signIn(auth) {
+      console.log("signing in")
+      auth
+        .signInWithEmailAndPassword(this.json.email, this.json.password)
+        .then((user) => this.load(this.FROM_INITIALIZE))
+        .catch((err) => {
+          if (err.code === "auth/user-not-found") this.signUp(auth);
+        });
+    }
+
+    signUp(auth) {
+      console.log("signing up")
+      auth
+        .createUserWithEmailAndPassword(this.json.email, this.json.password)
+        .then((user) => {
+          console.log("account created") 
+        }).catch((err) => console.log(err));
     }
 
     load(from) {
@@ -720,11 +758,16 @@ const Begin = (function (data) {
     }
 
     submit(data) {
-      this.configs.map(config => {
-        this.save(config.firestore, data)
-        .then(() => console.log("successfully saved in", config.projectId))
-        .catch(err => console.error("error submitting document", err))
-      })
+      console.log("user is", this.user)
+      if (this.user) {
+        this.configs.map(config => {
+          this.save(config.firestore, data)
+          .then(() => console.log("successfully saved in", config.projectId))
+          .catch(err => console.error("error submitting document", err))
+        })
+      } else {
+        console.log("you need to be signed in to store data")
+      }
     }
 
     save(firestore, data) {
@@ -745,36 +788,35 @@ const Begin = (function (data) {
 const currentUser = {
   isLoggedIn: false,
   email: "",
-  pw: ""
-}
-let feature_box
+  pw: "",
+};
+let feature_box;
 const interval = setInterval(() => {
   if (/loaded|complete/.test(document.readyState)) {
-    clearInterval(interval)
-    currentUser.email = store.customer.email
-    currentUser.pw = btoa(currentUser.email.split("").reverse().join(""))
+    clearInterval(interval);
+    currentUser.email = store.customer.email;
+    currentUser.pw = btoa(currentUser.email.split("").reverse().join(""));
 
     if (currentUser.email.length > 0) {
-      currentUser.isLoggedIn = true
+      currentUser.isLoggedIn = true;
 
-      const email = currentUser.email
-      const password = currentUser.pw
+      const email = currentUser.email;
+      const password = currentUser.pw;
       const config = {
-        apiKey: "AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU",
-        authDomain: "jumia-vote-deals.firebaseapp.com",
-        projectId: "jumia-vote-deals",
-        storageBucket: "jumia-vote-deals.appspot.com",
-        messagingSenderId: "15013363201",
-        appId: "1:15013363201:web:d8ed9ec2a4f2f331d50a00",
-        measurementId: "G-GNT4HGW9Z3"
-      }
-      
-      console.log("email", email, "password", password)
-      feature_box = Featurebox({ config, name: "vote_deals", email, password })
-      
-      feature_box.pubsub.subscribe(feature_box.DATA_ARRIVES, data => {
-        Begin(data)
-      })
+        apiKey: "AIzaSyBWGqYAUi_Xmd8X7TaRNFFXrCCafg_Fr48",
+        authDomain: "jumia-votes.firebaseapp.com",
+        projectId: "jumia-votes",
+        storageBucket: "jumia-votes.appspot.com",
+        messagingSenderId: "726979624232",
+        appId: "1:726979624232:web:9856ddc2e452dd6b30641d",
+      };
+
+      feature_box = Featurebox({ config, name: "vote_deals" });
+
+      feature_box.pubsub.subscribe(feature_box.DATA_ARRIVES, (data) => {
+        console.log("data ***has*** arrived");
+        Begin({ ...data, email, password });
+      });
     }
   }
 }, 10);

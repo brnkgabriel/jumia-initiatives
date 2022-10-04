@@ -1,7 +1,7 @@
 {
   "name": "webpack-typescript",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.scss",
   "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server"
