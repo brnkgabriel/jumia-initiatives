@@ -272,8 +272,7 @@ var Featurebox = (function (json) {
     initialize() {
       this.span = util.create("span")
       this.span.className = "-loading -posabs -preloader"
-      // window.addEventListener("load", this.cartSectionAdjustments.bind(this))
-      this.cartSectionAdjustments()
+      window.addEventListener("load", this.cartSectionAdjustments.bind(this))
     }
 
     cartSectionAdjustments() {
@@ -283,7 +282,7 @@ var Featurebox = (function (json) {
 
     mobileLogoUpdate() {
       let logo = util.el(".main_header--nav-left--logo.-logo_cms>img")
-      logo.setAttribute("src", util.JUMIA_LOGO)
+      logo && logo.setAttribute("src", util.JUMIA_LOGO)
     }
 
     proceed() {

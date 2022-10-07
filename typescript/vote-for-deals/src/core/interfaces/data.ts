@@ -43,10 +43,12 @@ export interface ISurprises extends IMarketing {
   discount: string; 
 }
 
-export interface IVoteDeals extends IMarketing, ISKU {
+export interface IVoteDeals extends ISKU {
   old_price: string;
   new_price: string;
-  category: string; 
+  category: string;
+  status: string;
+  initiative: string;
 }
 
 export interface ITreasureHunt extends IMarketing {

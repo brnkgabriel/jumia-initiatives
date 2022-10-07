@@ -1,14 +1,14 @@
 const Begin = function (data) {
   class Util {
     constructor(json) {
-      this.NAME = "Vote Deals";
-      this.TANDC = "Vote Deals T & C";
+      this.NAME = "Vote Deals Categories";
+      this.TANDC = "Vote Deals Categories T & Cs";
       this.LOAD_DATA = "load data";
       this.SUBMIT = "submit";
       this.FROM_INTERVAL = "interval";
       this.FROM_INITIALIZE = "initialize";
       this.VOTES_AVAILABLE = "votes available";
-      this.ID = "vote_deals";
+      this.ID = "vote_deals_categories";
       this.MS_INTERVAL_BTW_FETCHES = 10;
       this.VOTED_LIST = "voted-list";
       this.VOTED_DEALS = "voted-deals";
@@ -53,8 +53,10 @@ const Begin = function (data) {
         JSON.parse(localStorage.getItem(key)) || useIfNull;
       this.jsonToLStorage = (key, item) =>
         localStorage.setItem(key, JSON.stringify(item));
-      this.getData = (detail, json) =>
-        detail.json_list.filter((datum) => datum[json.key] === json.name);
+      this.getData = (json, initiative) => {
+        const list = json.json_list 
+        return list.filter(datum => datum.initiative === initiative)
+      }
       this.endTime = (time) => time + this.minute_duration * 60 * 1000;
       this.isItMyTime = (sku, time) => +new Date(sku.time) === parseInt(time);
       this.isPast = (time) =>
@@ -65,7 +67,9 @@ const Begin = function (data) {
       this.skuRows = () => this.all(".-sku_row");
       this.capitalize = (str) => str[0].toUpperCase() + str.slice(1);
       this.skuRow = (time) => this.el('.-sku_row[data-time="' + time + '"]');
+      this.categoryId = (category) => `cat-${this.id(category, "-")}`
       this.skuID = (sku) => sku.category + "_" + sku.sku + "_" + sku.time;
+      this.allCategories = (data) => [...new Set(data.map(datum => datum.category))]
       this.groupID = (category, time) =>
         this.id(
           category +
@@ -157,10 +161,11 @@ const Begin = function (data) {
           )}" style="background-color:${this.config[sku.type]}">${badge}</div>`;
       return badge_el;
     }
-    toggleClass(to_remove, to_add, class_name) {
+    toggle(to_remove, to_add, class_name) {
       to_remove.forEach((el) => el.classList.remove(class_name));
       to_add.classList.add(class_name);
     }
+    
 
     times(skus) {
       var times = skus.map((sku) => +new Date(sku.time));
@@ -237,11 +242,16 @@ const Begin = function (data) {
       return day + " " + mnth + " " + date.getDate();
     }
 
-    group(sku_list, times) {
-      return times.map((time) => {
-        var skus = sku_list.filter((sku) => this.isItMyTime(sku, time));
-        return { time, skus };
-      });
+    group(data, categories) {
+      const group = new Map()
+
+      categories.map(category => {
+        const skus = data.filter(datum => datum.category === category)
+        const randomized = this.randomize(skus)
+        group.set(category, randomized)
+        // group.set(category, skus)
+      })
+      return group
     }
 
     platform() {
@@ -277,70 +287,62 @@ const Begin = function (data) {
       feature_box.pubsub.subscribe(this.BUILD, this.build.bind(this));
       this.tabs.addEventListener("click", this.tabListener.bind(this));
     }
-
     reset() {
-      this.tabBounds$ = {};
-      this.tabs.innerHTML = "";
+      this.tabs.innerHTML = ""
     }
-
-    build(json) {
-      this.reset();
-      const times = json.reorderedTimes;
-
-      this.tabs.innerHTML = times.map(this.createTab.bind(this)).join("");
-
-      times.map(this.tabBounds.bind(this));
-
-      const firstTab = this.all(".-tab")[0];
-      this.setTabProps(firstTab, this.FIRST_TAB);
-      feature_box.is_mobile === false && this.scrollListener();
+  
+    build(data) {
+      this.reset()
+  
+      const { categories } = data
+      console.log("first category from tab", categories[0])
+  
+      this.tabs.innerHTML = categories
+      .map(this.createTab.bind(this))
+      .join("")
+  
+      // first tab
+      const firstTab = this.all(".-tab")[0]
+      this.setTabProps(firstTab, this.FIRST_TAB)
+      this.show()
+  
+      feature_box.is_mobile === false && this.scrollListeners()
     }
-
-    scrollListener() {
-      this.next.addEventListener("click", this.scrollToNext.bind(this));
-      this.prev.addEventListener("click", this.scrollToPrev.bind(this));
+    
+    scrollListeners() {
+      this.next.addEventListener("click", () => this.scrollTo("next"))
+      this.prev.addEventListener("click", () => this.scrollTo("prev"))
     }
-
-    scrollToNext() {
-      const start = this.tabs.scrollLeft + 50;
-      const end$$ = this.tabs.scrollLeft + 300;
-      const delta = end$$ - start;
-      this.tabs.scrollLeft = start + delta * 1;
+  
+    scrollTo(type) {
+      const start = type === "next"
+      ? this.tabs.scrollLeft + 50 : this.tabs.scrollLeft - 50
+      const end = type === "next"
+      ? this.tabs.scrollLeft + 300 : this.tabs.scrollLeft - 300
+  
+      const delta = end - start
+      this.tabs.scrollLeft = start + delta * 1
     }
-
-    scrollToPrev() {
-      const start = this.tabs.scrollLeft - 50;
-      const end$$ = this.tabs.scrollLeft - 300;
-      const delta = end$$ - start;
-      this.tabs.scrollLeft = start + delta * 1;
-    }
-
-    createTab(time, idx) {
-      const tabClass =
-        idx == 0
-          ? "-tab active -inlineblock -posrel -vamiddle"
-          : "-tab -inlineblock -posrel -vamiddle";
-      const tUnits = this.timeUnits(time);
-      return `<a href="#top" class="${tabClass}" data-time="${time}"><span class="-posabs -preloader -loading"></span><span class="-time">${this.twelveHrFormat(
-        tUnits.hr,
-        tUnits.mn
-      )}</span><span>${this.date(time)}</span></a>`;
-    }
-
-    tabListener(evt) {
-      const parent = evt.target.parentElement;
-      this.isATab(parent) && this.setTabProps(parent, this.TAB_LISTENER);
-    }
-
+  
     setTabProps(el, by) {
-      this.toggleClass(this.all(".-tab"), el, "active");
-      if (by === this.TAB_LISTENER)
-        feature_box.pubsub.emit(this.FOCUS, el.getAttribute("data-time"));
+      this.toggle(this.all(".-tab"), el, "active")
+  
+      if (by === this.TAB_LISTENER) {
+        feature_box.pubsub.emit(this.FOCUS, el.getAttribute("data-category"))
+      }
     }
-
-    tabBounds(time, idx) {
-      const tab = this.el('.-tab[data-time="' + time + '"]');
-      this.tabBounds$[time] = tab.getBoundingClientRect();
+  
+    createTab(category, idx) {
+      const tabClass = idx === 0
+      ? "-tab active -inlineblock -posrel -vamiddle"
+      : "-tab -inlineblock -posrel -vamiddle"
+  
+      return `<a href="#top" class="${tabClass}" data-category="${this.categoryId(category)}"><span class="-posabs -preloader -loading"></span><span>${category}</span></a>`
+    }
+  
+    tabListener(evt) {
+      const parent = evt.target.parentElement
+      this.isATab(parent) && this.setTabProps(parent, this.TAB_LISTENER)
     }
   }
 
@@ -352,8 +354,8 @@ const Begin = function (data) {
       this.tabs = new Tabs(json);
       this.skuRows = new SKURows(json);
 
-      this.data = this.getData(json, { key: "initiative", name: this.NAME });
-      this.tandcs = this.getData(json, { key: "initiative", name: this.TANDC });
+      this.data = this.getData(json, this.NAME);
+      this.tandcs = this.getData(json, this.TANDC);
 
       this.tandcEl = this.el(".-re.-rules");
       this.hiwCTA = this.el(".-how-it-works");
@@ -364,14 +366,12 @@ const Begin = function (data) {
     }
 
     init() {
-      const allTimes = this.times(this.data);
-      const pastAndFutureTimes = this.pastAndFutureTimes(allTimes);
-      let reorderedTimes = pastAndFutureTimes.future.concat(
-        pastAndFutureTimes.past
-      );
-      reorderedTimes = this.randomize(reorderedTimes);
-      const groupedSKUs = this.group(this.data, reorderedTimes);
-      feature_box.pubsub.emit(this.BUILD, { reorderedTimes, groupedSKUs });
+
+      const allCategories = this.allCategories(this.data)
+      const map = this.group(this.data, allCategories)
+  
+      const categories = this.randomize(allCategories)
+      feature_box.pubsub.emit(this.BUILD, { map, categories })
       return this;
     }
 
@@ -540,6 +540,10 @@ const Begin = function (data) {
       this.loggedIn = false;
       this.mounted = false;
       this.skusEl = this.el(".-skus");
+      this.createSKUs = (skus) => skus.map(this.skuHTML.bind(this)).join("")
+      this.skuHTML = (sku) => this.html(sku)
+      this.row = (category) => this.el(`.-sku_row[data-category="${category}"]`)
+      this.rows = () => this.all(".-sku_row")
 
       this.authenticate();
 
@@ -561,22 +565,35 @@ const Begin = function (data) {
       this.voteController = new VoteController(this.json, this.user);
     }
 
-    inFocus(time) {
-      const skuRows$ = this.skuRows();
-      const currentRow = this.skuRow(time);
-      this.toggleClass(skuRows$, currentRow, "active");
+
+    selectedRow(categoryId) {
+      const query = `.-sku_row[data-category="${categoryId}"]`
+      return this.el(query)
+    }
+
+    inFocus(categoryId) {
+      const skuRows = this.rows()
+      const currentRow = this.selectedRow(categoryId) 
+      this.toggle(skuRows, currentRow, "active")
     }
 
     displaySKUs(json) {
-      this.skusEl.innerHTML = json.groupedSKUs
-        .map(this.rowHTML.bind(this))
-        .join("");
+      this.reset()
+      var map = json.map
+      var categories = json.categories
 
-      const firstTime = this.all(".-sku_row")[0].getAttribute("data-time");
-      this.inFocus(firstTime);
-
-      feature_box.pubsub.emit(this.FOCUS, firstTime);
-      this.show(this.skusEl);
+      console.log("map.entries()", map)
+  
+      for (let [category, skus] of map.entries()) {
+        this.skusEl.innerHTML += this.rowHTML(category, skus, categories)
+      }
+  
+      const catId = this.categoryId(categories[0]) 
+  
+      this.inFocus(catId)
+  
+      // this.fbox.pubsub.emit(constants.FOCUS, catId)
+      this.show()
       return this;
     }
 
@@ -611,7 +628,7 @@ const Begin = function (data) {
 
     price(raw) {
       const num = this.numFromStr(raw)
-      return `${this.currency} ${Number(num).toLocaleString()}`
+      return `${this.CURRENCY} ${Number(num).toLocaleString()}`
     }
   
     numFromStr(str) {
@@ -619,11 +636,11 @@ const Begin = function (data) {
     }
   
     formatPrice(price) {
-      const formatted = this.config.currency_position === constants.PREFIX
-      ? `${this.currency} ${Number(price).toLocaleString()}`
-      : `${Number(price).toLocaleString()} ${this.config.currency}`
+      const formatted = this.config.currency_position === "prefix"
+      ? `${this.CURRENCY} ${Number(price).toLocaleString()}`
+      : `${Number(price).toLocaleString()} ${this.config.CURRENCY}`
   
-      return Number(price) === 0 ? constants.FREE : formatted
+      return Number(price) === 0 ? "FREE" : formatted
     }
   
     isANumber(price) {
@@ -643,38 +660,31 @@ const Begin = function (data) {
       }
       return null
     } 
-    singleHtml(sku) {
-      const oldPrice = this.price(sku.old_price);
-      const newPrice = this.price(sku.new_price);
+    
+    rowHTML(category, skus, categories) {
+      const skusHTML = this.createSKUs(skus)
+      return this.createRow(category, skusHTML, categories)
+    }
+
+    createRow(category, skusHTML, categories) {
+
+      const rowClass = category === categories[0]
+      ? `-sku_row active`
+      : "-sku_row"
+
+      return `<div class="${rowClass}" data-category="${this.categoryId(category)}">${skusHTML}</div>`
+    }
+
+    html(sku) {
+      const oldPrice = this.price(sku.old_price)
+      const newPrice = this.price(sku.new_price)
       // const oldPrice = sku.old_price
       // const newPrice = sku.new_price
-      const discount = this.discount(sku.old_price, sku.new_price);
-      const idName = sku.name + "-" + +new Date();
+      console.log("sku.name", sku.name, "sku", sku)
+      const discount = this.discount(sku.old_price, sku.new_price)
+      const idName = sku.name + "-" + (+new Date()) 
 
-      return `<div class="-sku -posrel -${sku.status}" id="${this.id(
-        idName,
-        "-"
-      )}"><a href="${
-        sku.pdp
-      }" target="_blank" class="-img -posrel" ><span class="-posabs -preloader -loading"></span><div class="-posabs -shadow"><span class="-posabs">sold out</span></div><img class="lazy-image loaded" data-src="${
-        sku.image
-      }" alt="sku_img" /></a><div class="-details -posabs"><div class="-name">${
-        sku.name
-      }</div><div class="-prices"><div class="-price -new">${newPrice}</div><div class="-price -old">${oldPrice}</div><div class="-disvcount">${discount}</div></div></div><div class="-btns -posabs"><a href="${
-        sku.pdp
-      }" target="_blank" class="-btn -view"></a><div class="-btn -unvote"></div><div class="-btn -vote"></div></div><div class="-vcounts -posabs"><div class="-ploader -unvotedown"></div><div class="-ploader -voteup"></div><div class="-vcount -down"><div class="-icon -unvote"></div><div class="-txt">8</div></div><div class="-vcount -up"><div class="-icon -vote"></div><div class="-txt">9</div></div></div></div>`;
-    }
-
-    voteHTML(count) {
-      return `<div class="-inlineblock -vamiddle -arrow"></div><div class="-inlineblock -vamiddle -count">${this.voteTxt(
-        count
-      )}</div>`;
-    }
-
-    createRow(group, idx, skusHtml) {
-      const rowClass =
-        idx === 0 ? "-sku_row -posrel active" : "-sku_row -posrel";
-      return `<div class="${rowClass}" data-time="${group.time}">${skusHtml}</div>`;
+      return `<div class="-sku -posrel -${sku.status}" id="${this.id(idName, '-')}"><a href="${sku.pdp}" target="_blank" class="-img -posrel" ><span class="-posabs -preloader -loading"></span><div class="-posabs -shadow"><span class="-posabs">sold out</span></div><img class="lazy-image loaded" data-src="${sku.image}" alt="sku_img" /></a><div class="-details -posabs"><div class="-name">${sku.name}</div><div class="-prices"><div class="-price -new">${newPrice}</div><div class="-price -old">${oldPrice}</div><div class="-disvcount">${discount}</div></div></div><div class="-btns -posabs"><a href="${sku.pdp}" target="_blank" class="-btn -view"></a><div class="-btn -unvote"></div><div class="-btn -vote"></div></div><div class="-vcounts -posabs"><div class="-ploader -unvotedown"></div><div class="-ploader -voteup"></div><div class="-vcount -down"><div class="-icon -unvote"></div><div class="-txt">8</div></div><div class="-vcount -up"><div class="-icon -vote"></div><div class="-txt">9</div></div></div></div>`
     }
 
     authenticate() {
@@ -772,9 +782,7 @@ const Begin = function (data) {
 
     initialize(json) {
       this.json = json;
-      this.configStr = [
-        "projectId==jumia-vote-deals|messagingSenderId==15013363201|apiKey==AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU|appId==1:15013363201:web:d8ed9ec2a4f2f331d50a00",
-      ];
+      this.configStr = ["projectId==jumia-vote-deals|messagingSenderId==15013363201|apiKey==AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU|appId==1:15013363201:web:d8ed9ec2a4f2f331d50a00",]
       this.db_idx = 0;
     }
 
@@ -913,15 +921,16 @@ const interval = setInterval(() => {
       const email = currentUser.email;
       const password = currentUser.pw;
       const config = {
-        apiKey: "AIzaSyBWGqYAUi_Xmd8X7TaRNFFXrCCafg_Fr48",
-        authDomain: "jumia-votes.firebaseapp.com",
-        projectId: "jumia-votes",
-        storageBucket: "jumia-votes.appspot.com",
-        messagingSenderId: "726979624232",
-        appId: "1:726979624232:web:9856ddc2e452dd6b30641d",
+        apiKey: "AIzaSyAA8dQEt-yZnDyY3Lra8lndRJ3LWNYVW0o",
+        authDomain: "jumia-c15a3.firebaseapp.com",
+        databaseURL: "https://jumia-c15a3.firebaseio.com",
+        projectId: "jumia-c15a3",
+        storageBucket: "jumia-c15a3.appspot.com",
+        messagingSenderId: "295115190934",
+        appId: "1:295115190934:web:de0b33b53a514c3c"
       };
 
-      feature_box = Featurebox({ config, name: "vote_deals" });
+      feature_box = Featurebox({ config, name: "vote_deals_categories" });
 
       feature_box.pubsub.subscribe(feature_box.DATA_ARRIVES, (data) => {
         console.log("data ***has*** arrived");

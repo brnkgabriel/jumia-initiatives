@@ -1,3 +1,4 @@
+import { IVoteDeals } from './interfaces/data';
 import { constants } from "./constants";
 import { IRemoteData } from "./interfaces/config";
 import { IBuild } from "./interfaces/others";
@@ -20,7 +21,7 @@ export class Tabs extends Util {
     this.prev = this.el(constants.PREVQUERY)
     this.next = this.el(constants.NEXTQUERY)
 
-    fbox.pubsub.subscribe(constants.BUILD, this.build.bind(this))
+    fbox.pubsub.subscribe(constants.GROUPED, this.build.bind(this))
     this.tabs.addEventListener(constants.CLICK, this.tabListener.bind(this))
   }
 
@@ -30,9 +31,11 @@ export class Tabs extends Util {
 
   build(data: IBuild) {
     this.reset()
-    const times = data.reorderedTimes
 
-    this.tabs.innerHTML = times
+    const { categories } = data
+    console.log("first category from tab", categories[0])
+
+    this.tabs.innerHTML = categories
     .map(this.createTab.bind(this))
     .join("")
 
@@ -63,18 +66,16 @@ export class Tabs extends Util {
     this.toggle(this.all(constants.TABQUERY), el, constants.ACTIVECLASS)
 
     if (by === constants.TABLISTENER) {
-      this.fbox.pubsub.emit(constants.FOCUS, el.getAttribute(constants.DATATIME))
+      this.fbox.pubsub.emit(constants.FOCUS, el.getAttribute(constants.DATACATEGORY))
     }
   }
 
-  createTab(time: number, idx: number) {
+  createTab(category: string, idx: number) {
     const tabClass = idx === 0
     ? "-tab active -inlineblock -posrel -vamiddle"
     : "-tab -inlineblock -posrel -vamiddle"
 
-    const tUnits = this.timeUnits(time)
-
-    return `<a href="#top" class="${tabClass}" data-time="${time}"><span class="-posabs -preloader -loading"></span><span class="-time">${this.twelveHrFormat(tUnits.hour, tUnits.mins)}</span><span>${this.date(time)}</span></a>`
+    return `<a href="#top" class="${tabClass}" data-category="${this.categoryId(category)}"><span class="-posabs -preloader -loading"></span><span>${category}</span></a>`
   }
 
   tabListener(evt: Event) {

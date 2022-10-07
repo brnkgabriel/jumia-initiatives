@@ -1,7 +1,7 @@
 import { IDomain, IRemoteConfig, IRemoteData } from "./interfaces/config";
-import { IPastAndFutureTimes } from "./interfaces/others";
+import { IDBConfig, IPastAndFutureTimes } from "./interfaces/others";
 import { constants, fxn } from "./constants";
-import { ICampaignCalendar } from "./interfaces/data";
+import { IVoteDeals } from "./interfaces/data";
 
 // type TypeOrNull<T> = T | null;
 
@@ -22,14 +22,16 @@ export class Util {
   private live;
   private skuID;
   private capitalize;
-  private oosByTime;
-  private isItMyTime;
+  // private oosByTime;
   private isPast;
   private isFuture;
   private digit;
   protected isATab;
   private midnight;
   protected fbox;
+  protected allCategories;
+  protected randomize;
+  protected categoryId;
 
   constructor(remoteData: IRemoteData, fbox: any) {
     this.remoteData = remoteData
@@ -41,16 +43,18 @@ export class Util {
 
     this.el = (query: string) => document.querySelector(fxn.idQuery(query)) as HTMLElement
     this.all = (query: string) => document.querySelectorAll(fxn.idQuery(query))
+    this.allCategories = (data: IVoteDeals[]) => [...new Set(data.map(datum => datum.category))]
     this.pad = (time: number) => time.toString().length == 1 ? "0" + time : time
     this.endTime = (time: number) => time + (this.minutesDuration * 60 * 1000)
-    this.skuRow = (time: number) => this.el(fxn.timeQuery(time))
+    this.randomize = (list: any[]) => list.sort( () => .5 - Math.random() )
+    this.skuRow = (category: string) => this.el(fxn.tabQuery(category))
+    this.categoryId = (category: string) => `cat-${this.id(category, "-")}`
     // this.skuRows = () => this.all(constants.SKUROWQUERY)
-    this.tab = (time: number) => this.el(fxn.tabQuery(time))
+    this.tab = (category: string) => this.el(fxn.tabQuery(category))
     this.live = (list: HTMLElement[], action: "add" | "remove") => list.forEach(each => each.classList[action](constants.LIVECLASS))
-    this.skuID = (sku: ICampaignCalendar) => sku.name + "-" + (+new Date(sku.time))
+    this.skuID = (sku: IVoteDeals) => sku.name + "-" + (+new Date(sku.sku))
     this.capitalize = (str: string) => str[0].toUpperCase() + str.slice(1)
-    this.oosByTime = (times: number[]) => times.map(time => this.skuRow(time)?.classList.add(constants.OOSCLASS))
-    this.isItMyTime = (sku: ICampaignCalendar, time: number) => +new Date(sku.time) === time
+    // this.oosByCategory = (category: string[]) => times.map(time => this.skuRow(time)?.classList.add(constants.OOSCLASS))
     this.isPast = (time: number) => Date.now() > time && Date.now() > this.endTime(time)
     this.isFuture = (time: number, past: number[]) => past.indexOf(time) === -1
     this.digit = (num: number, unit: string) => num !== 0 ? this.pad(num) + unit : ""
@@ -59,46 +63,26 @@ export class Util {
   }
 
   getData(initiative: string) {
-    const list = this.remoteData.json_list as ICampaignCalendar[]
+    const list = this.remoteData.json_list as IVoteDeals[]
     return list.filter((datum) => datum.initiative === initiative)
   }
 
-  times(skus:ICampaignCalendar[]) {
-    const times = skus.map(sku => this.midnight(sku.time))
-    const uniqueTimes = Array.from(new Set(times))
-    return uniqueTimes.sort((a, b) => a - b)
-  }
+  group(data: IVoteDeals[], categories: string[]) {
+    const group:Map<string, IVoteDeals[]> = new Map()
 
-  group(skuList: ICampaignCalendar[], times: number[]) {
-    return times.map(time => {
-      const skus = skuList.filter(sku => this.isItMyTime(sku, time))
-      return { time, skus }
+    categories.map(category => {
+      const skus = data.filter(datum => datum.category === category)
+      const randomized = this.randomize(skus)
+      group.set(category, randomized)
+      // group.set(category, skus)
     })
+    return group
   }
 
   pastAndFutureTimes(times: number[]) {
     const past = times.filter(this.isPast)
     const future = times.filter(time => this.isFuture(time, past))
     return { past, future }
-  }
-
-  additionalTimes(pastFutureTimes: IPastAndFutureTimes) {
-    const future = pastFutureTimes.future
-    const past = pastFutureTimes.past
-    const addTimes = this.addition(future, past)
-    return future.length < constants.TIMESLOTSTODISPLAY ? addTimes : []
-  }
-
-  addition(future: number[], past: number[]) {
-    const additional = []
-    const remaining = constants.TIMESLOTSTODISPLAY - future.length
-
-    for (let i = remaining; i > -1; i--) {
-      const endIdx = past.length - 1
-      const idx = endIdx - i
-      additional.push(past[idx])
-    }
-    return additional
   }
 
   timeUnits(time: number) {
@@ -111,40 +95,7 @@ export class Util {
 
     return { day, month, date, hour, mins }
   }
-
-  twelveHrFormat(hour: number, mins: number) {
-    if (hour === 12) return `${this.pad(hour)}:${this.pad(mins)}${constants.PM}`
-    else if (hour > 12) return `${this.pad(hour - 12)}:${this.pad(mins)}${constants.PM}`
-    else if (hour === 0) return `12:${this.pad(mins)}${constants.AM}`
-    else return `${this.pad(hour)}:${this.pad(mins)}${constants.AM}`
-  }
   
-  dayDiff(time: number) {
-    const timeDate = new Date(time).getDate()
-    return new Date().getDate() - timeDate
-  }
-
-  sameMonth(time: number) {
-    return new Date(time).getMonth() === new Date().getMonth()
-  }
-
-  date(time: number) {
-    const dayDiff = this.dayDiff(time)
-    if (dayDiff === 0 && this.sameMonth(time))
-      return this.capitalize(constants.TODAY)
-    else if (dayDiff === 1 && this.sameMonth(time))
-      return this.capitalize(constants.YESTERDAY)
-    else if (dayDiff === -1 && this.sameMonth(time))
-      return this.capitalize(constants.TOMORROW)
-    else return this.fullDate(time)
-  }
-
-  fullDate(time: number) {
-    const date = new Date(time)
-    const month = date.toLocaleDateString("en-US", { month: "short" })
-    const day = date.toLocaleDateString("en-US", { weekday: "short" })
-    return `${day} ${month} ${date.getDate()}`
-  }
 
   toggle(toRemove: NodeListOf<Element>, toAdd: HTMLElement, className: string) {
     toRemove.forEach(el => el.classList.remove(className))
@@ -157,8 +108,7 @@ export class Util {
   }
 
   numFromStr(str: string) {
-    const match = str.match(/\d/g)
-    return match ? match.join("") : 0
+    return Number(str.replace(/[^0-9\.]+/g,""))
   }
 
   formatPrice(price: string) {
@@ -169,11 +119,23 @@ export class Util {
     return Number(price) === 0 ? constants.FREE : formatted
   }
 
-  discount($old: string, $new: string) {
-    const diff = Number($old) - Number($new)
-    const ratio = diff * 100 / Number($old)
-    return !isNaN(ratio) ? `-${Math.round(ratio)}%` : ""
+  isANumber(price: string) {
+    const pieces = price.split(" ")
+    const num = pieces.filter(piece => !isNaN(Number(piece)))[0]
+
+    return !isNaN(Number(num)) ? Number(num) : null
   }
+
+  discount($old: string, $new: string) {
+    const oldP = this.isANumber($old)
+    const newP = this.isANumber($new)
+    if (!isNaN(Number(oldP))) {
+      var diff = Number(oldP) - Number(newP)
+      var ratio = (diff * 100) / Number(oldP)
+      return !isNaN(ratio) ? "-" + Math.round(ratio) + "%" : "";
+    }
+    return null
+  } 
 
   // continue from replace pattern
   replacePattern(pattern: string | RegExp, str: string) {
@@ -193,31 +155,13 @@ export class Util {
     return keyStr as KeyType
   }
 
-  badge(sku: ICampaignCalendar) {
-    const badgeId = this.id(sku.type, "_")
-    const iconKey = this.key(`${badgeId}_icon`, this.config)
-    const typeKey = this.key(sku.type, this.config)
-    const badgeIcon = this.config[iconKey]
-
-    const badgeText = sku.type === "Generic" ? "Limited Stock" : sku.type
-    const badge = badgeIcon
-    ? `<img class="lazy-image" data-src="${badgeIcon}" alt="sku_img"/>`
-    : badgeText
-    
-    return badgeIcon
-    ? `<div class="-tag -inlineblock -vamiddle -b-img -${this.id(sku.type, '-')}"><span class="-posabs -preloader -loading"></span>${badge}</div>`
-    : `<div class="-tag -inlineblock -vamiddle -${this.id(sku.type, '-')}" style="background-color:${this.config[typeKey]}">${badge}</div>`
-  }
-
-  timeFormat(time: number) {
-    const tUnits = this.timeUnits(time)
-    const t = this.twelveHrFormat(tUnits.hour, tUnits.mins)
-    return `${this.date(time)}'s ${t} sale`
+  dbConfigKey(keyStr: string, obj: IDBConfig) {
+    type keyType = keyof typeof obj
+    return keyStr as KeyType
   }
 
   show() {
     let imageObserver = new this.fbox.ImageObserver()
-    console.log("featurebox is", this.fbox)
     imageObserver = null
     return this
   }

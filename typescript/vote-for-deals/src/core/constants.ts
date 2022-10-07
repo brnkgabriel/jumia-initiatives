@@ -10,12 +10,20 @@ export const config:IDBConfig = {
   appId: "1:295115190934:web:de0b33b53a514c3c"
 }
 
+export const voteDBList: string[] = ["projectId==jumia-vote-deals|messagingSenderId==15013363201|apiKey==AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU|appId==1:15013363201:web:d8ed9ec2a4f2f331d50a00",]
+
 export const constants:IConstants = {
-  SHEETNAME: "campaign_calendar",
-  NAME: "Campaign Calendar",
-  TANDCS: "Campaign Calendar T & Cs",
+  LOAD_DATA: "load data",
+  SUBMIT: "submit",
+  FROM_INTERVAL: "interval",
+  VOTED_DEALS: "voted-deals",
+  VOTES_AVAILABLE: "votes available",
+  SHEETNAME: "vote_deals_categories",
+  NAME: "Vote Deals Categories",
+  TANDCS: "Vote Deals Categories T & Cs",
   FOCUS: "focus",
   BUILD: "build",
+  GROUPED: "grouped",
   RESET: "reset",
   TABLISTENER: "tab listener",
   INSESSION: "in session",
@@ -33,7 +41,7 @@ export const constants:IConstants = {
   TOMORROW: "tomorrow",
   PREFIX: "prefix",
   FREE: "FREE",
-  INITIATIVE: "Campaign Calendar",
+  INITIATIVE: "Vote Deals Categories",
   TANDCSQUERY: ".-re.-rules",
   HOWITWORKSQUERY: ".-how-it-works",
   TOPBANNERQUERY: ".-banner.-top",
@@ -56,7 +64,7 @@ export const constants:IConstants = {
   NEXTQUERY: ".-control.-next",
   FIRSTTAB: "first tab",
   ACTIVECLASS: "active",
-  DATATIME: "data-time",
+  DATACATEGORY: "data-category",
   NEXT: "next",
   PREV: "prev",
 
@@ -67,6 +75,6 @@ export const constants:IConstants = {
 
 export const fxn = {
   idQuery: (query: string) => "#initiative " + query,
-  timeQuery: (time: number) => '.-sku_row[data-time="' + time + '"]',
-  tabQuery: (time: number) => '.-tab[data-time="' + time + '"]'
+  tabQuery: (category: string) => '.-tab[data-category="' + category + '"]',
+  rowQuery: (categoryId: string) => `.-sku_row[data-category="${categoryId}"]`
 }

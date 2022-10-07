@@ -1,4 +1,5 @@
 import { ICampaignCalendar } from "./data";
+import { IVoteDeals } from "./data";
 
 export interface IDBConfig {
   apiKey: string;
@@ -10,12 +11,35 @@ export interface IDBConfig {
   appId: string;
 }
 
+export interface IOptions {
+  email: string;
+  password: string;
+  Database: any;
+}
+
+export interface IPartialDBConfig {
+  projectId: string;
+  messagingSenderId: string;
+  apiKey: string;
+  appId: string;
+}
+
+export interface IFirestoreConfig extends IDBConfig {
+  firestore: string
+}
+
 export interface IConstants {
+  LOAD_DATA: string;
+  SUBMIT: string;
+  FROM_INTERVAL: string;
+  VOTED_DEALS: string;
+  VOTES_AVAILABLE: string;
   SHEETNAME: string;
   NAME: string;
   TANDCS: string;
   FOCUS: string;
   BUILD: string;
+  GROUPED: string;
   RESET: string;
   TABLISTENER: string;
   INSESSION: string;
@@ -57,7 +81,7 @@ export interface IConstants {
   NEXTQUERY: string;
   FIRSTTAB: string;
   ACTIVECLASS: string;
-  DATATIME: string;
+  DATACATEGORY: string;
   NEXT: string;
   PREV: string;
 
@@ -81,11 +105,11 @@ export interface IPastAndFutureTimes {
 }
 
 export interface IBuild {
-  reorderedTimes: number[],
-  groupedSKUs: IGroup[]
+  categories: string[],
+  map: Map<string, IVoteDeals[]>
 }
 
 export interface IGroup {
-  time: number;
-  skus: ICampaignCalendar[];
+  category: string;
+  skus: IVoteDeals[];
 }

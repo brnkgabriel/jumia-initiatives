@@ -1,0 +1,172 @@
+import { constants, voteDBList } from '../src/core/constants';
+import { IRemoteData, ISendable } from '../src/core/interfaces/config';
+import { IDBConfig, IFirestoreConfig, IPartialDBConfig, IOptions } from '../src/core/interfaces/others';
+import { Util } from '../src/core/util';
+
+export class Database extends Util {
+  private voteDBList 
+  private send
+  private configs: IFirestoreConfig[]
+  private FLStore: any
+  private TLStore: any
+  private $dbIdx: number = 0
+  private user: any
+
+  constructor(remoteData: IRemoteData, fbox:any, private options: IOptions) {
+    super(remoteData, fbox)
+    // voteDBList replaces this.configStr
+    this.voteDBList = voteDBList
+    this.send = (data:ISendable) => this.fbox.pubsub.emit(constants.VOTES_AVAILABLE, data)
+    this.FLStore = (key: string, useIfNull: object) => JSON.parse(options.localStorage.getItem(key)) || useIfNull
+    this.TLStore = (key: string, item: any) => options.localStorage.setItem(key, JSON.stringify(item))
+
+    this.configs = this.voteDBList
+    .map(this.str2Obj.bind(this))
+    .map(this.firestore.bind(this))
+
+    console.log("this.configs are", this.configs)
+  }
+  
+  regExReplace(str: string) { return str.replace(/\"|\,/g, ''); }
+  
+  str2Obj(str: string) {
+    const replaced = this.regExReplace(str)
+    const props = replaced.split("|")
+    const partial = this.partialConfig(props)
+ 
+    let dbConfig:IDBConfig = {
+      apiKey: "",
+      appId: "",
+      authDomain: "",
+      databaseURL: "",
+      messagingSenderId: "",
+      projectId: "",
+      storageBucket: ""
+    }
+    dbConfig.apiKey = partial.apiKey
+    dbConfig.appId = partial.appId
+    dbConfig.messagingSenderId = partial.messagingSenderId
+    dbConfig.projectId = partial.projectId
+    dbConfig.authDomain = partial.projectId + ".firebaseapp.com"
+    dbConfig.databaseURL = "https://" + partial.projectId + ".firebaseio.com"
+    dbConfig.storageBucket = partial.projectId + ".appspot.com"
+    
+    return dbConfig
+  }
+
+  partialConfig(props: string[]) {
+    let partial: IPartialDBConfig = {
+      apiKey: "",
+      appId: "",
+      messagingSenderId: "",
+      projectId: ""
+    }
+    props.map((prop: string) => {
+      const keyVal = prop.split("==")
+      const key = keyVal[0]
+      switch (key) {
+        case "apiKey":
+          partial.apiKey = keyVal[1]
+          break;
+        case "appId":
+          partial.appId = keyVal[1]
+          break;
+        case "messagingSenderId":
+          partial.messagingSenderId = keyVal[1]
+          break;
+        case "projectId":
+          partial.projectId = keyVal[1]
+          break;
+        default:
+          break;
+      }
+    })
+    return partial
+  }
+ 
+  firestore(json: IDBConfig) {
+    const firebase = this.options.firebase
+    const app = firebase.initializeApp(json, json.projectId)
+    const auth = app.auth()
+
+    auth.onAuthStateChanged((user: any) => {
+      this.user = user
+      this.signIn(auth)
+    })
+    
+
+    return { ...json, firestore: app.firestore() }
+  }
+
+  signIn(auth: any) {
+    console.log("signing in")
+    auth
+      .signInWithEmailAndPassword(this.options.email, this.options.password)
+      .then((user: any) => this.load(constants.FROMSTART))
+      .catch((err: any) => {
+        if (err.code === "auth/user-not-found") this.signUp(auth);
+      });
+  }
+  
+  signUp(auth: any) {
+    console.log("signing up")
+    auth
+      .createUserWithEmailAndPassword(this.options.email, this.options.password)
+      .then((user: any) => {
+        console.log("account created") 
+      }).catch((err: any) => console.log(err));
+  }
+  
+  load(from: string) {
+    const dbIdx = this.dbIdx(from)
+    const dbConfig:IFirestoreConfig = this.configs[dbIdx]
+
+    this.get(dbConfig.firestore, constants.SHEETNAME)
+    .then(this.onSuccess.bind(this))
+    .catch(this.onError.bind(this))
+  }
+  
+  onSuccess(data: any) {
+    console.info("successfully retrieved data")
+    this.TLStore(constants.VOTED_DEALS, data)
+    this.send(data)
+  }
+
+  onError(err: any) {
+    console.info("error fetching data", err.message)
+    const data = this.FLStore(constants.VOTED_DEALS, {})
+    this.send(data)
+  }
+
+  dbIdx(from: string) {
+    if (from === constants.FROM_INTERVAL) {
+      this.$dbIdx++
+      return this.$dbIdx >= this.configs.length ? 0 : this.$dbIdx
+    }
+    return this.$dbIdx
+  }
+
+  submit(data: any) {
+    console.log("user is", this.options.email)
+    if (this.user) {
+      this.configs.map(config => {
+        this.save(config.firestore, data)
+        .then(() => console.log("successfully saved in", config.projectId))
+        .catch((err: any) => console.error("error submitting document", err))
+      })
+    } else {
+      console.log("you need to be signed in to store data")
+    }
+  }
+
+  save(firestore: any, data: any) {
+    return firestore.collection(constants.SHEETNAME).doc("data")
+    .set(data, { merge: true })
+  }
+
+  get(firestore: any, collection: string) {
+    return firestore.collection(collection).doc("data")
+    .get().then((doc: any) => doc.exists ? doc.data() : {})
+    .catch((err: any) => console.error(err))
+  }
+}

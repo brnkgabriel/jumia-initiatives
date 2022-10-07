@@ -7,6 +7,10 @@ export interface IRemoteData {
   json_list: MarketingTypes[]
 }
 
+export interface ISendable {
+  
+}
+
 export interface IDomain {
   url: string;
   host: string;
