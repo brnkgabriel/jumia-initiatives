@@ -70,8 +70,11 @@ class FetchData {
 
   categoryL1(sku) {
     const categoryStr = sku.categories;
-    const pieces = categoryStr.split("/");
-    return pieces[0]
+    if (categoryStr) {
+      const pieces = categoryStr.split("/");
+      return pieces[0]
+    }
+    return ""
   }
 
   /**

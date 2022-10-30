@@ -293,7 +293,7 @@ var Featurebox = (function (json) {
       let help = util.el("#help")
       let logo = util.el(".header-main>.logo>a>img")
       
-      logo.setAttribute("src", util.JUMIA_LOGO)
+      logo && logo.setAttribute("src", util.JUMIA_LOGO)
 
       actions.innerHTML = ""
       actions.appendChild(account)
@@ -425,12 +425,13 @@ var Featurebox = (function (json) {
       this.fetchLoaders = [this.header, this.filtersEl, this.htmlEl]
 
       util.urlParams.tag = json.config.campaign_tag
+      this.campaign_url = json.config.campaign_url
 
       pubsub.subscribe(util.FILTER_UPDATED, this.filterUpdated.bind(this))
       pubsub.subscribe(util.UPDATE_URL, this.updateURL.bind(this))
       pubsub.subscribe(util.FREELINKS_BUILT, this.freelinkListener.bind(this))
 
-      this.catalog = () => this.start()
+      this.catalog = () => this.start(this.campaign_url)
 
       this.itemsToRender.map(fnName => {
         this[fnName]()
@@ -716,6 +717,7 @@ var Featurebox = (function (json) {
       return {
         desktop: directUrl => {
           const beautified = this.urlBeautifier(directUrl)
+          console.log("beautified from desktop", beautified, "directUrl", directUrl)
           this.skeletonScreens("add")
           return scrape(beautified.url)
           .then(desktopExtract)
@@ -725,6 +727,7 @@ var Featurebox = (function (json) {
         },
         mobile: directUrl => {
           const beautified = this.urlBeautifier(directUrl)
+          console.log("beautified from mobile", beautified, "directUrl", directUrl)
           const mobileScraping = beautified => {
             return [
               { url: beautified.url, type: util.PRODUCTS },
@@ -1613,4 +1616,5 @@ var Featurebox = (function (json) {
     saveDocument: database.setDoc,
   }
 })
+
 

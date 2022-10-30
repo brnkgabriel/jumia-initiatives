@@ -1,0 +1,31 @@
+{
+  "brnkgabriel@gmail.com": {
+    "mapValue": {
+      "fields": {
+        "HO953EA2SBL6WNAFAMZ": { "integerValue": "1" },
+        "QU984MP14X3OJNAFAMZ": { "integerValue": "0" },
+        "FI057SE0K8BAZNAFAMZ": { "integerValue": "0" },
+        "BR226SP00SEH3NAFAMZ": { "integerValue": "1" },
+        "GE779EL15ANSZNAFAMZ": { "integerValue": "0" },
+        "BR169EA06TC2FNAFAMZ": { "integerValue": "1" },
+        "GE779EA1BY9XTNAFAMZ": { "integerValue": "0" },
+        "KO971EA1L48O1NAFAMZ": { "integerValue": "1" },
+        "GE779EA0M5NFINAFAMZ": { "integerValue": "1" }
+      }
+    }
+  },
+  "adiil.elbay@jumia.com": {
+    "mapValue": { "fields": { "GE779IP16OHZBNAFAMZ": { "integerValue": "1" } } }
+  },
+  "gabibironke@gmail.com": {
+    "mapValue": {
+      "fields": {
+        "OR537EA0U06Z2NAFAMZ": { "integerValue": "1" },
+        "GE779EA04S6GCNAFAMZ": { "integerValue": "1" },
+        "MU275EA1FJYMWNAFAMZ": { "integerValue": "1" },
+        "GE779EA08BVGLNAFAMZ": { "integerValue": "0" },
+        "FL585EA0I41P9NAFAMZ": { "integerValue": "0" }
+      }
+    }
+  }
+}

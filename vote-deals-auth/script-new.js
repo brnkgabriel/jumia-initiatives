@@ -21,7 +21,10 @@ const Begin = function (data) {
       this.PREV             = "prev"
       this.NEXT             = "next"
       this.VOTE_IDENTIFIER  = "-vt"
+      this.PREFIX           = "prefix"
+      this.SUFFIX           = "suffix"
       this.CURRENCY         = json.config.currency
+      this.CURRENCY_POS     = json.config.currency_position
       this.MS_INTV_BTW_FTC  = 10
 
       this.regExReplace     = str => str.replace(/\"|\,/g, "")
@@ -58,8 +61,7 @@ const Begin = function (data) {
 
       return group
     }
-
-    // continue from replace pattern
+ 
     replacePattern(pattern, str) {
       const re = new RegExp(pattern, "g")
       return str.replace(re, "-")
@@ -76,6 +78,8 @@ const Begin = function (data) {
     platform() {
       var is_mobile = "ontouchstart" in window;
       var dateRange = this.config[this.ID + "_date_range"];
+      var canClick = this.config[this.ID + "_clickable"]
+      var clickable = canClick === "yes"
       var banner = is_mobile
         ? this.config[this.ID + "_mobile_banner"]
         : this.config[this.ID + "_desktop_banner"];
@@ -83,7 +87,7 @@ const Begin = function (data) {
         ? this.config[this.ID + "_deeplink"]
         : this.domain.host + "/" + this.config.download_apps_page;
       var currencyPosition = this.config.currency_position;
-      return { banner, live_link, dateRange, currencyPosition };
+      return { banner, live_link, dateRange, currencyPosition, clickable };
     }
     show(parent) {
       this.imageObserver = new fBox.ImageObserver(parent)
@@ -109,13 +113,11 @@ const Begin = function (data) {
       this.tabs.innerHTML = ""
 
       const categories = data.categories
-      console.log("first category from tab", categories[0])
 
       this.tabs.innerHTML = categories
       .map(this.createTab.bind(this))
       .join("")
-
-      // first tab
+ 
       const firstTab = this.all(".-tab")[0]
       this.setTabProps(firstTab, this.FIRST_TAB)
       this.show()
@@ -227,17 +229,56 @@ const Begin = function (data) {
       super(json)
 
       this.votedDeals  = {}
-
-      this.skuVoteMap = new Map()
+      this.voteMap = {}
 
       fBox.pubsub.subscribe(this.VOTES_AVAILABLE, (data) => {
-        // countAndMapVotes updates skuVoteMap with databasevalue
-        this.skuVoteMap = new Map()
         this.votedDeals = data
-        this.countAndMapVotes()
+        this.countAndMapVotes() 
       });
 
       this.skusEl.addEventListener("click", this.vote.bind(this))
+    }
+
+    countAndMapVotes() {
+      this.voteMap = {}
+      console.log("fetching and updating votemap")
+      Object.keys(this.votedDeals).map(email => {
+        const skuObj = this.votedDeals[email]
+        
+        Object.keys(skuObj).map(skuId => {
+          const numb = Number(skuObj[skuId])
+          const skuExists = this.voteMap[skuId]
+          if (skuExists) {
+            const uvotes = this.voteMap[skuId].uvotes
+            const dvotes = this.voteMap[skuId].dvotes
+            this.voteMap[skuId].uvotes = numb ? uvotes + 1 : uvotes
+            this.voteMap[skuId].dvotes = !numb ? dvotes + 1 : dvotes
+          } else {
+            this.voteMap[skuId] = { uvotes: numb ? 1 : 0, dvotes: !numb ? 1 : 0 }
+          }
+        })
+      })
+
+      Object.keys(this.voteMap).map(skuId => {
+        const votes = this.voteMap[skuId]
+        const skuEl = this.el(`.-sku[data-sku="${skuId}"]`)
+        const dvotestxt = this.el(".-down .-txt", skuEl)
+        const uvotestxt = this.el(".-up .-txt", skuEl)
+        dvotestxt.textContent = votes.dvotes + ""
+        uvotestxt.textContent = votes.uvotes + ""
+
+        this.setDataState(skuId)
+      })
+    }
+
+    setDataState(skuId) {
+      const userHasVoted = this.votedDeals[this.user.email]
+      const userHasVotedThisSKU = userHasVoted ? userHasVoted[skuId] : null
+      if (userHasVotedThisSKU) {
+        const type = Number(userHasVotedThisSKU) === 1 ? this.VOTE: this.UNVOTE
+        const skuEl = this.el(`.-sku[data-sku="${skuId}"]`)  
+        skuEl.setAttribute("data-state", type)
+      }
     }
 
     vote(evt) {
@@ -253,11 +294,9 @@ const Begin = function (data) {
     }
 
     makeUpdates({ skuEl, skuId, type }) {
-      this.updateVotedDeals({ skuEl, skuId, type })
-      this.updateVoteMap({ skuId, email: this.user.email, type, from: this.VOTE })
+      this.updateVotedDeals({ skuEl, skuId, type }) 
       this.updateUi({ skuEl, skuId, type })
       fBox.pubsub.emit(this.SUBMIT, this.votedDeals)
-      console.log('skuVoteMap', this.skuVoteMap)
     }
 
     updateVotedDeals({ skuEl, type, skuId }) {
@@ -273,97 +312,50 @@ const Begin = function (data) {
         Object.assign(this.votedDeals, emailJson)
       }
     }
-
-    updateVoteMap({ skuId, email, type, from }) {
-      let exists = this.skuVoteMap.get(skuId)
-      const votedBefore = email === this.user.email
-      const fromVote = from === this.VOTE
-
-      // if the user has voted before
-      if (exists) {
-        // and his action is to upvote an item
-        if (type === this.VOTE) {
-          // increase his upvote count
-          exists.upvotes += 1
-          // and subtract 1 from downvotes
-          if (fromVote) {
-            exists.downvotes = exists.downvotes - 1
-          }
-        } else {
-          // if his action is to downvote an item
-          // increase his downvote count
-          exists.downvotes += 1
-          // and subtract 1 from upvote
-          if (fromVote) {
-            exists.upvotes = exists.upvotes - 1
-          }
-        }
-      } else {
-        exists = type === this.VOTE ? { upvotes: 1, downvotes: 0 } : { upvotes: 0, downvotes: 1 }
-      }
-      this.skuVoteMap.set(skuId, exists)
-      
-    }
     
     updateUi({ skuEl, skuId, type }) {
+      this.updateVoteCounts(skuId, type, this.VOTE)
       skuEl.setAttribute("data-state", type)
-      this.updateVoteCounts(skuId)
     }
 
-    updateVoteCounts(skuId) { 
-      const skuEl = this.el(`.-sku[data-sku="${skuId}"]`)     
+    updateVoteCounts(skuId, type) {
+      const skuEl = this.el(`.-sku[data-sku="${skuId}"]`)  
+      const votedBefore = skuEl.getAttribute("data-state")   
       const dvotestxt = this.el(".-down .-txt", skuEl)
       const uvotestxt = this.el(".-up .-txt", skuEl)
-      const votes = this.skuVoteMap.get(skuId)
-      uvotestxt.textContent = votes.upvotes
-      dvotestxt.textContent = votes.downvotes
+      let uvoteCount = Number(uvotestxt.textContent)
+      let dvoteCount = Number(dvotestxt.textContent)
+      
+      if (type === this.VOTE) {
+        uvoteCount = uvoteCount + 1
+        if (votedBefore) {
+          dvoteCount = dvoteCount - 1
+        }
+      } else {
+        dvoteCount = dvoteCount + 1
+        if (votedBefore) {
+          uvoteCount = uvoteCount - 1
+        }
+      }
+
+      uvotestxt.textContent = uvoteCount
+      dvotestxt.textContent = dvoteCount
 
       const uvotes = this.el(".-up", skuEl)
       const dvotes = this.el(".-down", skuEl)
 
-      if (votes.upvotes > votes.downvotes) {
+      if (uvoteCount > dvoteCount) {
         uvotes.classList.add("-greater")
         dvotes.classList.remove("-greater")
       }
       
-      if (votes.downvotes > votes.upvotes) {
+      if (dvoteCount > uvoteCount) {
         dvotes.classList.add("-greater")
         uvotes.classList.remove("-greater")
       }
       
-      
       this.skusEl.classList.remove("-loading")
     }
-
-    countAndMapVotes() {
-      const emailKeys = Object.keys(this.votedDeals)
-      Object.keys(this.votedDeals).map(email => {
-        const skuObj = this.votedDeals[email]
-        
-        Object.keys(skuObj).map(skuId => {
-          const numb = Number(skuObj[skuId])
-          const type = numb === 1 ? this.VOTE : this.UNVOTE
-          this.updateVoteMap({ skuId, email, type, from: this.LOAD_DATA })
-        })
-      })
-
-      console.log(this.skuVoteMap)
-      this.skuVoteMap.forEach((value, skuId) => {
-        this.setDataState(skuId)
-        this.updateVoteCounts(skuId)
-      })
-    }
-
-    setDataState(skuId) {
-      const userHasVoted = this.votedDeals[this.user.email]
-      const userHasVotedThisSKU = userHasVoted[skuId]
-      if (userHasVoted) {
-        const type = Number(userHasVotedThisSKU) === 1 ? this.VOTE: this.UNVOTE
-        const skuEl = this.el(`.-sku[data-sku="${skuId}"]`)  
-        skuEl.setAttribute("data-state", type)
-      }
-    }
-
   }
 
   class SkuRows extends Util {
@@ -439,7 +431,8 @@ const Begin = function (data) {
     price(raw) {
       const split = raw.split("-")
       const num = this.numFromStr(split[0])
-      return `${this.CURRENCY} ${Number(num).toLocaleString()}`
+      const pos = this.CURRENCY_POS
+      return pos === this.PREFIX ? `${this.CURRENCY} ${Number(num).toLocaleString()}` : `${Number(num).toLocaleString()} ${this.CURRENCY}`
     }
   
     numFromStr(str) {
@@ -482,9 +475,14 @@ const Begin = function (data) {
       const oldPrice = this.price(sku.old_price)
       const newPrice = this.price(sku.new_price)
       const discount = this.discount(sku.old_price, sku.new_price)
-      const idName = sku.name + "-" + (+new Date()) 
+      const idName = sku.name + "-" + (+new Date())
 
-      return `<div class="-sku -posrel -${sku.status}" data-sku="${sku.sku}"><a href="${sku.pdp}" target="_blank" class="-img -posrel" ><span class="-posabs -preloader -loading"></span><div class="-posabs -shadow"><span class="-posabs">voted</span></div><img class="lazy-image loaded" data-src="${sku.image}" alt="sku_img" /></a><div class="-details -posabs"><div class="-name">${sku.name}</div><div class="-prices"><div class="-price -new">${newPrice}</div><div class="-price -old">${oldPrice}</div><div class="-discount">${discount}</div></div></div><div class="-btns -posabs"><a href="${sku.pdp}" target="_blank" class="-btn -view"></a><div class="-btn -vt -unvote"></div><div class="-btn -vt -vote"></div></div><div class="-vcounts -posabs"><div class="-ploaders"><div class="-ploader -unvotedown"></div><div class="-ploader -voteup"></div></div><div class="-vcount -down"><div class="-icon -unvote"></div><div class="-txt">0</div></div><div class="-vcount -up"><div class="-icon -vote"></div><div class="-txt">0</div></div></div></div>`
+      const priceAndDiscount = sku.new_price === "" ? "" : `<div class="-prices"><div class="-price -new">${newPrice}</div><div class="-price -old">${oldPrice}</div><div class="-discount">${discount}</div></div>`
+
+      const viewBtn = this.platform().clickable ? `<a href="${sku.pdp}" target="_blank" class="-btn -view"></a>` : ""
+      const imgStyl = this.platform().clickable ? "" : `style="pointer-events:none !important"`
+
+      return `<div class="-sku -posrel -${sku.status}" data-sku="${sku.sku}"><a href="${sku.pdp}" target="_blank" class="-img -posrel" ${imgStyl} ><span class="-posabs -preloader -loading"></span><div class="-posabs -shadow"><span class="-posabs">voted</span></div><img class="lazy-image loaded" data-src="${sku.image}" alt="sku_img" /></a><div class="-details -posabs"><div class="-name">${sku.name}</div>${priceAndDiscount} </div><div class="-btns -posabs">${viewBtn} <div class="-btn -vt -unvote"></div><div class="-btn -vt -vote"></div></div><div class="-vcounts -posabs"><div class="-ploaders"><div class="-ploader -unvotedown"></div><div class="-ploader -voteup"></div></div><div class="-vcount -down"><div class="-icon -unvote"></div><div class="-txt">0</div></div><div class="-vcount -up"><div class="-icon -vote"></div><div class="-txt">0</div></div></div></div>`
     }
   }
 
@@ -621,7 +619,6 @@ const Begin = function (data) {
     }
 
     onSuccess(data) {
-      console.info("successfully retrieved data from onSuccess", data)
       this.send(data)
     }
     onError(err) {
@@ -630,7 +627,9 @@ const Begin = function (data) {
     }
 
     submit(data) {
+      console.log("this.user", this.user, "to set data, outside if")
       if (this.user) {
+        console.log("this.user", this.user, "to set data, inside if")
         this.set(data)
         .then(() => console.log("successfully saved in", this.wConfig.projectId))
         .catch(err => console.log("error submitting document", err))
@@ -645,16 +644,16 @@ const currentUser = { isLoggedIn: false, email: "", pw: "" }
 let fBox
 
 const readConfig = {
-  apiKey: "AIzaSyC8htXCQ-5Tm_qCKgbVBQaS_Enu5zQmIeU",
-  authDomain: "jumia-vote-deals.firebaseapp.com",
-  projectId: "jumia-vote-deals",
-  storageBucket: "jumia-vote-deals.appspot.com",
-  messagingSenderId: "15013363201",
-  appId: "1:15013363201:web:d8ed9ec2a4f2f331d50a00",
-  measurementId: "G-GNT4HGW9Z3"
+  apiKey: "AIzaSyCKGQw8QCq8qcxJ39QznQgarzOLP_WF1_Q",
+  authDomain: "jumia-17681.firebaseapp.com",
+  databaseURL: "https://jumia-17681.firebaseio.com",
+  projectId: "jumia-17681",
+  storageBucket: "jumia-17681.appspot.com",
+  messagingSenderId: "472156067665",
+  appId: "1:472156067665:web:976495829b072466"
 }
 
-const writeConfig = {...readConfig}
+const writeConfig = { ...readConfig }
 
 const interval = setInterval(() => {
   if (/loaded|complete/.test(document.readyState)) {
